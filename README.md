@@ -10,7 +10,7 @@
 
 -   Free software: MIT License
 -   Documentation: https://Thomatous.github.io/Chartops
-    
+
 
 ## Features
 
