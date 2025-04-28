@@ -1,11 +1,11 @@
 # Changelog
 
-## v0.0.1 - Date
+## v0.0.1 - 28/4/2025
 
 **Improvement**:
 
--   TBD
+-   Initial project setup
 
 **New Features**:
 
--   TBD
+-   Initial CookieCutter features

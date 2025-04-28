@@ -4,7 +4,8 @@
 [![image](https://img.shields.io/pypi/v/chartops.svg)](https://pypi.python.org/pypi/chartops)
 
 
-**Python Boilerplate contains all the boilerplate you need to create a Python package.**
+**A python package for geospatial analysis and mapping.**  
+Created as part of the course on [Geospatial Software Design](https://geog-510.gishub.org/) by the [university of Tennessee Knoxville](https://www.utk.edu/).
 
 
 -   Free software: MIT License
