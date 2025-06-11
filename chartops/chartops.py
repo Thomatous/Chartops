@@ -1,9 +1,9 @@
-
 from pathlib import Path
 from ipyleaflet import Map as iPyLeafletMap
 from ipyleaflet import LayersControl, basemap_to_tiles, GeoJSON
 from chartops import common
 import geopandas as gpd
+
 
 class Map(iPyLeafletMap):
     def add_basemap(self, basemap_name: str, **kwargs) -> None:
@@ -31,7 +31,7 @@ class Map(iPyLeafletMap):
         basemap_tiles.base = True
         basemap_tiles.name = basemap_name
         self.add(basemap_tiles)
-      
+
     def add_layer_control(self, position: str = "topright") -> None:
         """
         Add a layer control to the map.
@@ -53,10 +53,12 @@ class Map(iPyLeafletMap):
         """
         valid_positions = ["topright", "topleft", "bottomright", "bottomleft"]
         if position not in valid_positions:
-            raise ValueError(f"Invalid position '{position}'. Valid positions are: {valid_positions}")
+            raise ValueError(
+                f"Invalid position '{position}'. Valid positions are: {valid_positions}"
+            )
         self.add(LayersControl(position=position))
 
-    def add_vector(self, filepath: Path | str, name: str = '', **kwargs) -> None:
+    def add_vector(self, filepath: Path | str, name: str = "", **kwargs) -> None:
         """
         Add a vector layer to the map.
 
@@ -87,15 +89,15 @@ class Map(iPyLeafletMap):
             raise FileNotFoundError(f"File not found: {filepath}")
 
         # Validate styling options
-        color = kwargs.get('color', 'blue')
+        color = kwargs.get("color", "blue")
         if not isinstance(color, str):
             raise ValueError(f"color must be a string, got {type(color)}")
 
-        weight = kwargs.get('weight', 2)
+        weight = kwargs.get("weight", 2)
         if not isinstance(weight, int):
             raise ValueError(f"weight must be an integer, got {type(weight)}")
 
-        fillOpacity = kwargs.get('fillOpacity', 0.1)
+        fillOpacity = kwargs.get("fillOpacity", 0.1)
         if not isinstance(fillOpacity, (int, float)) or not (0 <= fillOpacity <= 1):
             raise ValueError("fillOpacity must be a float between 0 and 1")
 
@@ -105,11 +107,7 @@ class Map(iPyLeafletMap):
             layer = GeoJSON(
                 data=geojson,
                 name=name,
-                style={
-                    'color': color,
-                    'weight': weight,
-                    'fillOpacity': fillOpacity
-                }
+                style={"color": color, "weight": weight, "fillOpacity": fillOpacity},
             )
             self.add(layer)
         except Exception as e:

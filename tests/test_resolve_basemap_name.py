@@ -4,6 +4,7 @@ from ipyleaflet import basemaps
 
 from chartops import common
 
+
 class TestResolveBasemapName(unittest.TestCase):
     def test_resolve_simple_basemap_name(self) -> None:
         basemap_name = "OpenStreetMap"
@@ -16,7 +17,7 @@ class TestResolveBasemapName(unittest.TestCase):
         basemap = common.resolve_basemap_name(basemap_name)
         expected_basemap = getattr(getattr(basemaps, "Esri"), "WorldImagery")
         self.assertIs(basemap, expected_basemap)
-    
+
     def test_resolve_invalid_basemap_name(self) -> None:
         basemap_name = "InvalidBasemap"
         with self.assertRaises(AttributeError):
