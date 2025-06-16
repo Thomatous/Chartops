@@ -1,6 +1,7 @@
 import folium
 from chartops import common
 from pathlib import Path
+import geopandas as gpd
 
 class Map(folium.Map):
     def add_basemap(self, basemap_name: str, **kwargs) -> None:
@@ -12,35 +13,39 @@ class Map(folium.Map):
             **kwargs
         ).add_to(self)
 
-
-    def add_layer_control(self, position: str = "topright") -> None:
+    def add_layer_control(self) -> None:
         folium.LayerControl().add_to(self)
 
-    def add_vector(self, filepath: Path | str, name: str = "", **kwargs) -> None:
-        """
-        Add a vector layer to the map.
+    def add_vector(self, filepath: Path | str, name: str, **kwargs) -> None:
+        color = kwargs.get("color", "blue")
+        weight = kwargs.get("weight", 2)
+        fill_opacity = kwargs.get("fillOpacity", 0.1)
 
-        Parameters
-        ----------
-        filepath : Path or str
-                Path to the vector dataset or URL to a remote file.
-        name : str (default: '')
-            Name of the layer.
-        **kwargs : dict
-            Additional styling options for the layer. Valid options include:
-            - color: str (default: 'blue')
-            - weight: int (default: 2)
-            - fillOpacity: float (default: 0.1)
+        try:
+            if isinstance(filepath, str) and filepath.startswith("http"):
+                folium.GeoJson(
+                    filepath,
+                    name=name,
+                    style_function=lambda feature: {
+                        "color": color,
+                        "weight": weight,
+                        "fillOpacity": fill_opacity
+                    }
+                ).add_to(self)
 
-        Returns
-        -------
-        None
-
-        Raises
-        ------
-        FileNotFoundError
-            If the local filepath does not exist.
-        ValueError
-            If the vector data cannot be read or converted to GeoJSON, or if styling options are invalid.
-        """
-        pass
+            else:
+                path = Path(filepath)
+                if not path.exists():
+                    raise FileNotFoundError(f"File not found: {filepath}")
+                gdf = gpd.read_file(path)
+                folium.GeoJson(
+                    gdf,
+                    name=name,
+                    style_function=lambda feature: {
+                        "color": color,
+                        "weight": weight,
+                        "fillOpacity": fill_opacity
+                    }
+                ).add_to(self)
+        except Exception as e:
+            raise ValueError(f"Failed to add vector layer from {filepath}: {e}")
