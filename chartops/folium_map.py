@@ -5,6 +5,25 @@ import geopandas as gpd
 
 class Map(folium.Map):
     def add_basemap(self, basemap_name: str, **kwargs) -> None:
+        """
+        Add a basemap to the folium map.
+
+        Parameters
+        ----------
+        basemap_name : str
+            Name of the basemap to add. This is resolved using `chartops.common.resolve_basemap_name`.
+        **kwargs : dict
+            Additional keyword arguments to pass to `folium.TileLayer`.
+
+        Returns
+        -------
+        None
+
+        Raises
+        ------
+        ValueError
+            If the basemap name cannot be resolved to a valid tile service.
+        """
         basemap = common.resolve_basemap_name(basemap_name)
         folium.TileLayer(
             tiles=basemap.url,
@@ -14,9 +33,45 @@ class Map(folium.Map):
         ).add_to(self)
 
     def add_layer_control(self) -> None:
+        """
+        Add a layer control widget to the folium map.
+
+        Returns
+        -------
+        None
+        """
         folium.LayerControl().add_to(self)
 
     def add_vector(self, filepath: Path | str, name: str, **kwargs) -> None:
+        """
+        Add a vector data layer to the folium map.
+
+        Parameters
+        ----------
+        filepath : Path or str
+            Local path to the vector dataset or a URL to a remote GeoJSON file.
+        name : str
+            Name of the layer to be shown in the layer control.
+        **kwargs : dict
+            Additional styling options for the layer. Valid options include:
+            - color : str, default 'blue'
+                Outline color of the vector features.
+            - weight : int, default 2
+                Line weight of the vector features.
+            - fillOpacity : float, default 0.1
+                Opacity of the fill. Must be between 0 and 1.
+
+        Returns
+        -------
+        None
+
+        Raises
+        ------
+        FileNotFoundError
+            If the provided file path does not exist.
+        ValueError
+            If styling parameters are invalid.
+        """
         color = kwargs.get("color", "blue")
         if not isinstance(color, str):
             raise ValueError(f"color must be a string, got {type(color)}")
