@@ -3,6 +3,7 @@ from chartops import common
 from pathlib import Path
 import geopandas as gpd
 
+
 class Map(folium.Map):
     def add_basemap(self, basemap_name: str, **kwargs) -> None:
         """
@@ -26,10 +27,7 @@ class Map(folium.Map):
         """
         basemap = common.resolve_basemap_name(basemap_name)
         folium.TileLayer(
-            tiles=basemap.url,
-            attr=basemap.attribution,
-            name=basemap_name,
-            **kwargs
+            tiles=basemap.url, attr=basemap.attribution, name=basemap_name, **kwargs
         ).add_to(self)
 
     def add_layer_control(self) -> None:
@@ -91,8 +89,8 @@ class Map(folium.Map):
                 style_function=lambda feature: {
                     "color": color,
                     "weight": weight,
-                    "fillOpacity": fill_opacity
-                }
+                    "fillOpacity": fill_opacity,
+                },
             ).add_to(self)
         else:
             path = Path(filepath)
@@ -105,6 +103,6 @@ class Map(folium.Map):
                 style_function=lambda feature: {
                     "color": color,
                     "weight": weight,
-                    "fillOpacity": fill_opacity
-                }
+                    "fillOpacity": fill_opacity,
+                },
             ).add_to(self)

@@ -18,14 +18,21 @@ class TestChartopsFolium(unittest.TestCase):
     def test_adding_a_basemap(self):
         self.map.add_basemap("Esri.WorldImagery")
         # Folium layers are in _children
-        self.assertTrue(any(isinstance(child, folium.raster_layers.TileLayer)
-                            for child in self.map._children.values()))
+        self.assertTrue(
+            any(
+                isinstance(child, folium.raster_layers.TileLayer)
+                for child in self.map._children.values()
+            )
+        )
 
     def test_adding_multiple_basemaps(self):
         self.map.add_basemap("Esri.WorldImagery")
         self.map.add_basemap("OpenTopoMap")
-        tile_layers = [child for child in self.map._children.values()
-                       if isinstance(child, folium.raster_layers.TileLayer)]
+        tile_layers = [
+            child
+            for child in self.map._children.values()
+            if isinstance(child, folium.raster_layers.TileLayer)
+        ]
         self.assertGreaterEqual(len(tile_layers), 2)
 
     def test_adding_an_invalid_basemap(self):
@@ -34,17 +41,23 @@ class TestChartopsFolium(unittest.TestCase):
 
     def test_adding_layer_control(self):
         self.map.add_layer_control()
-        controls = [child for child in self.map._children.values()
-                    if isinstance(child, folium.map.LayerControl)]
+        controls = [
+            child
+            for child in self.map._children.values()
+            if isinstance(child, folium.map.LayerControl)
+        ]
         self.assertTrue(len(controls) > 0)
 
     def test_adding_a_vector_layer_from_url(self):
         self.map.add_vector(
             "https://github.com/jupyter-widgets/ipyleaflet/raw/master/examples/europe_110.geo.json",
-            name="Europe"
+            name="Europe",
         )
-        geojsons = [child for child in self.map._children.values()
-                    if isinstance(child, folium.GeoJson)]
+        geojsons = [
+            child
+            for child in self.map._children.values()
+            if isinstance(child, folium.GeoJson)
+        ]
         self.assertTrue(len(geojsons) > 0)
 
     def test_adding_vector_layer_from_shapefile(self):
@@ -56,28 +69,34 @@ class TestChartopsFolium(unittest.TestCase):
             }
             df = pd.DataFrame(data)
             gdf = gpd.GeoDataFrame(
-                df, geometry=gpd.points_from_xy(df.Longitude, df.Latitude), crs="EPSG:4326"
+                df,
+                geometry=gpd.points_from_xy(df.Longitude, df.Latitude),
+                crs="EPSG:4326",
             )
             shapefile_path = Path(temp_dir) / "cities.shp"
             gdf.to_file(shapefile_path)
 
             self.map.add_vector(shapefile_path, name="Cities")
-            geojsons = [child for child in self.map._children.values()
-                        if isinstance(child, folium.GeoJson)]
+            geojsons = [
+                child
+                for child in self.map._children.values()
+                if isinstance(child, folium.GeoJson)
+            ]
             self.assertTrue(len(geojsons) > 0)
 
     def test_adding_vector_layer_from_geojson_file(self):
         from shapely.geometry import Point
 
         with tempfile.TemporaryDirectory() as temp_dir:
-            gdf = gpd.GeoDataFrame(
-                geometry=[Point(0, 0), Point(1, 1)], crs="EPSG:4326"
-            )
+            gdf = gpd.GeoDataFrame(geometry=[Point(0, 0), Point(1, 1)], crs="EPSG:4326")
             geojson_path = Path(temp_dir) / "points.geojson"
             gdf.to_file(geojson_path, driver="GeoJSON")
             self.map.add_vector(geojson_path, name="Points")
-            geojsons = [child for child in self.map._children.values()
-                        if isinstance(child, folium.GeoJson)]
+            geojsons = [
+                child
+                for child in self.map._children.values()
+                if isinstance(child, folium.GeoJson)
+            ]
             self.assertTrue(len(geojsons) > 0)
 
     def test_adding_vector_layer_from_invalid_file(self):
@@ -90,10 +109,13 @@ class TestChartopsFolium(unittest.TestCase):
             name="Styled",
             color="red",
             weight=5,
-            fillOpacity=0.3
+            fillOpacity=0.3,
         )
-        geojsons = [child for child in self.map._children.values()
-                    if isinstance(child, folium.GeoJson)]
+        geojsons = [
+            child
+            for child in self.map._children.values()
+            if isinstance(child, folium.GeoJson)
+        ]
         self.assertTrue(len(geojsons) > 0)
 
     def test_adding_vector_layer_with_invalid_weight(self):
@@ -101,7 +123,7 @@ class TestChartopsFolium(unittest.TestCase):
             self.map.add_vector(
                 "https://github.com/jupyter-widgets/ipyleaflet/raw/master/examples/europe_110.geo.json",
                 name="Invalid",
-                weight="heavy"
+                weight="heavy",
             )
 
     def test_adding_vector_layer_with_invalid_fill_opacity(self):
@@ -109,7 +131,7 @@ class TestChartopsFolium(unittest.TestCase):
             self.map.add_vector(
                 "https://github.com/jupyter-widgets/ipyleaflet/raw/master/examples/europe_110.geo.json",
                 name="Invalid",
-                fillOpacity=2.0
+                fillOpacity=2.0,
             )
 
     def test_adding_vector_layer_with_invalid_color_type(self):
@@ -117,6 +139,5 @@ class TestChartopsFolium(unittest.TestCase):
             self.map.add_vector(
                 "https://github.com/jupyter-widgets/ipyleaflet/raw/master/examples/europe_110.geo.json",
                 name="Invalid",
-                color=123
+                color=123,
             )
-
