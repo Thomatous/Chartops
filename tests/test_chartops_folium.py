@@ -2,7 +2,7 @@ import unittest
 import tempfile
 from pathlib import Path
 
-from chartops.folium_map import Map
+from chartops.folium import Map
 import folium
 import pandas as pd
 import geopandas as gpd
