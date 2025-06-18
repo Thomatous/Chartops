@@ -8,23 +8,18 @@ import geopandas as gpd
 class Map(iPyLeafletMap):
     def add_basemap(self, basemap_name: str, **kwargs) -> None:
         """
-        Add a basemap to the map.
+        Add a basemap to the ipyleaflet map.
 
         Parameters
         ----------
         basemap_name : str
-            Name of the basemap to add.
+            Name of the basemap to add. Resolved with xyzservices.
         **kwargs : dict
-            Additional keyword arguments to pass to `ipyleaflet.basemap_to_tiles`.
+            Extra kwargs to pass to basemap_to_tiles.
 
         Returns
         -------
         None
-
-        Raises
-        ------
-        ValueError
-            If the basemap name is not resolvable or the basemap cannot be converted to tiles.
         """
         basemap = common.resolve_basemap_name(basemap_name)
         basemap_tiles = basemap_to_tiles(basemap, **kwargs)
@@ -88,7 +83,6 @@ class Map(iPyLeafletMap):
         if isinstance(filepath, Path) and not filepath.exists():
             raise FileNotFoundError(f"File not found: {filepath}")
 
-        # Validate styling options
         color = kwargs.get("color", "blue")
         if not isinstance(color, str):
             raise ValueError(f"color must be a string, got {type(color)}")

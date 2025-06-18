@@ -12,22 +12,20 @@ class Map(folium.Map):
         Parameters
         ----------
         basemap_name : str
-            Name of the basemap to add. This is resolved using `chartops.common.resolve_basemap_name`.
+            Name of the basemap to add. Resolved with xyzservices.
         **kwargs : dict
-            Additional keyword arguments to pass to `folium.TileLayer`.
+            Extra kwargs to pass to folium.TileLayer.
 
         Returns
         -------
         None
-
-        Raises
-        ------
-        ValueError
-            If the basemap name cannot be resolved to a valid tile service.
         """
         basemap = common.resolve_basemap_name(basemap_name)
         folium.TileLayer(
-            tiles=basemap.url, attr=basemap.attribution, name=basemap_name, **kwargs
+            tiles=basemap.build_url(),
+            attr=basemap.attribution,
+            name=basemap_name,
+            **kwargs,
         ).add_to(self)
 
     def add_layer_control(self) -> None:

@@ -17,10 +17,9 @@ class TestChartopsFolium(unittest.TestCase):
 
     def test_adding_a_basemap(self):
         self.map.add_basemap("Esri.WorldImagery")
-        # Folium layers are in _children
         self.assertTrue(
             any(
-                isinstance(child, folium.raster_layers.TileLayer)
+                isinstance(child, folium.TileLayer)
                 for child in self.map._children.values()
             )
         )
@@ -31,7 +30,7 @@ class TestChartopsFolium(unittest.TestCase):
         tile_layers = [
             child
             for child in self.map._children.values()
-            if isinstance(child, folium.raster_layers.TileLayer)
+            if isinstance(child, folium.TileLayer)
         ]
         self.assertGreaterEqual(len(tile_layers), 2)
 
@@ -44,7 +43,7 @@ class TestChartopsFolium(unittest.TestCase):
         controls = [
             child
             for child in self.map._children.values()
-            if isinstance(child, folium.map.LayerControl)
+            if isinstance(child, folium.LayerControl)
         ]
         self.assertTrue(len(controls) > 0)
 
