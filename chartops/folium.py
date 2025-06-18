@@ -1,4 +1,5 @@
 import folium
+from typing import Union
 from chartops import common
 from pathlib import Path
 import geopandas as gpd
@@ -38,7 +39,7 @@ class Map(folium.Map):
         """
         folium.LayerControl().add_to(self)
 
-    def add_vector(self, filepath: Path | str, name: str, **kwargs) -> None:
+    def add_vector(self, filepath: Union[Path, str], name: str, **kwargs) -> None:
         """
         Add a vector data layer to the folium map.
 

@@ -1,3 +1,4 @@
+from typing import Union
 from pathlib import Path
 from ipyleaflet import Map as iPyLeafletMap
 from ipyleaflet import LayersControl, basemap_to_tiles, GeoJSON
@@ -53,7 +54,7 @@ class Map(iPyLeafletMap):
             )
         self.add(LayersControl(position=position))
 
-    def add_vector(self, filepath: Path | str, name: str = "", **kwargs) -> None:
+    def add_vector(self, filepath: Union[Path, str], name: str = "", **kwargs) -> None:
         """
         Add a vector layer to the map.
 
