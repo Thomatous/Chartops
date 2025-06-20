@@ -10,16 +10,12 @@ class Map(folium.Map):
         """
         Add a basemap to the folium map.
 
-        Parameters
-        ----------
-        basemap_name : str
-            Name of the basemap to add. Resolved with xyzservices.
-        **kwargs : dict
-            Extra kwargs to pass to folium.TileLayer.
+        Args:
+            basemap_name (str): Name of the basemap to add. Resolved with xyzservices.
+            **kwargs (dict): Extra kwargs to pass to basemap_to_tiles.
 
-        Returns
-        -------
-        None
+        Returns:
+            None
         """
         basemap = common.resolve_basemap_name(basemap_name)
         folium.TileLayer(
@@ -33,9 +29,8 @@ class Map(folium.Map):
         """
         Add a layer control widget to the folium map.
 
-        Returns
-        -------
-        None
+        Returns:
+            None
         """
         folium.LayerControl().add_to(self)
 
@@ -43,31 +38,20 @@ class Map(folium.Map):
         """
         Add a vector data layer to the folium map.
 
-        Parameters
-        ----------
-        filepath : Path or str
-            Local path to the vector dataset or a URL to a remote GeoJSON file.
-        name : str
-            Name of the layer to be shown in the layer control.
-        **kwargs : dict
-            Additional styling options for the layer. Valid options include:
-            - color : str, default 'blue'
-                Outline color of the vector features.
-            - weight : int, default 2
-                Line weight of the vector features.
-            - fillOpacity : float, default 0.1
-                Opacity of the fill. Must be between 0 and 1.
+        Args:
+            filepath (Path or str): Path to the vector dataset or URL to a remote file.
+            name (str): Name of the layer. Defaults to ''..
+            **kwargs (dict): Additional styling options for the layer. Valid options include:
+                - color: str (default: 'blue')
+                - weight: int (default: 2)
+                - fillOpacity: float (default: 0.1)
 
-        Returns
-        -------
-        None
+        Returns:
+            None
 
-        Raises
-        ------
-        FileNotFoundError
-            If the provided file path does not exist.
-        ValueError
-            If styling parameters are invalid.
+        Raises:
+            FileNotFoundError: If the provided file path does not exist.
+            ValueError: If styling parameters are invalid.
         """
         color = kwargs.get("color", "blue")
         if not isinstance(color, str):

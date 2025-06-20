@@ -11,16 +11,12 @@ class Map(iPyLeafletMap):
         """
         Add a basemap to the ipyleaflet map.
 
-        Parameters
-        ----------
-        basemap_name : str
-            Name of the basemap to add. Resolved with xyzservices.
-        **kwargs : dict
-            Extra kwargs to pass to basemap_to_tiles.
+        Args:
+            basemap_name (str): Name of the basemap to add. Resolved with xyzservices.
+            **kwargs (dict): Extra kwargs to pass to basemap_to_tiles.
 
-        Returns
-        -------
-        None
+        Returns:
+            None
         """
         basemap = common.resolve_basemap_name(basemap_name)
         basemap_tiles = basemap_to_tiles(basemap, **kwargs)
@@ -32,20 +28,14 @@ class Map(iPyLeafletMap):
         """
         Add a layer control to the map.
 
-        Parameters
-        ----------
-        position : str, optional
-            Position of the layer control. Valid positions are "topright", "topleft", "bottomright", "bottomleft".
-            Default is "topright".
+        Args:
+            position (str, optional): Position of the layer control. Valid positions are "topright", "topleft", "bottomright", "bottomleft". Default is "topright".
 
-        Returns
-        -------
-        None
+        Returns:
+            None
 
-        Raises
-        ------
-        ValueError
-            If the position is not valid.
+        Raises:
+            ValueError: If the position is not valid.
         """
         valid_positions = ["topright", "topleft", "bottomright", "bottomleft"]
         if position not in valid_positions:
@@ -58,28 +48,20 @@ class Map(iPyLeafletMap):
         """
         Add a vector layer to the map.
 
-        Parameters
-        ----------
-        filepath : Path or str
-                Path to the vector dataset or URL to a remote file.
-        name : str (default: '')
-            Name of the layer.
-        **kwargs : dict
-            Additional styling options for the layer. Valid options include:
-            - color: str (default: 'blue')
-            - weight: int (default: 2)
-            - fillOpacity: float (default: 0.1)
+        Args:
+            filepath (Path or str): Path to the vector dataset or URL to a remote file.
+            name (str): Name of the layer. Defaults to ''..
+            **kwargs (dict): Additional styling options for the layer. Valid options include:
+                - color: str (default: 'blue')
+                - weight: int (default: 2)
+                - fillOpacity: float (default: 0.1)
 
-        Returns
-        -------
-        None
+        Returns:
+            None
 
-        Raises
-        ------
-        FileNotFoundError
-            If the local filepath does not exist.
-        ValueError
-            If the vector data cannot be read or converted to GeoJSON, or if styling options are invalid.
+        Raises:
+            FileNotFoundError: If the local filepath does not exist.
+            ValueError: If the vector data cannot be read or converted to GeoJSON, or if styling options are invalid.
         """
         if isinstance(filepath, Path) and not filepath.exists():
             raise FileNotFoundError(f"File not found: {filepath}")
