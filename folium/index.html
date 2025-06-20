@@ -675,30 +675,6 @@
     </span>
   </a>
   
-    <nav class="md-nav" aria-label="add_basemap()">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#chartops.folium.Map.add_basemap--parameters" class="md-nav__link">
-    <span class="md-ellipsis">
-      Parameters
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#chartops.folium.Map.add_basemap--returns" class="md-nav__link">
-    <span class="md-ellipsis">
-      Returns
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
 </li>
         
           <li class="md-nav__item">
@@ -708,21 +684,6 @@
     </span>
   </a>
   
-    <nav class="md-nav" aria-label="add_layer_control()">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#chartops.folium.Map.add_layer_control--returns" class="md-nav__link">
-    <span class="md-ellipsis">
-      Returns
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
 </li>
         
           <li class="md-nav__item">
@@ -731,39 +692,6 @@
       add_vector()
     </span>
   </a>
-  
-    <nav class="md-nav" aria-label="add_vector()">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#chartops.folium.Map.add_vector--parameters" class="md-nav__link">
-    <span class="md-ellipsis">
-      Parameters
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#chartops.folium.Map.add_vector--returns" class="md-nav__link">
-    <span class="md-ellipsis">
-      Returns
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#chartops.folium.Map.add_vector--raises" class="md-nav__link">
-    <span class="md-ellipsis">
-      Raises
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
   
 </li>
         
@@ -863,30 +791,6 @@
     </span>
   </a>
   
-    <nav class="md-nav" aria-label="add_basemap()">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#chartops.folium.Map.add_basemap--parameters" class="md-nav__link">
-    <span class="md-ellipsis">
-      Parameters
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#chartops.folium.Map.add_basemap--returns" class="md-nav__link">
-    <span class="md-ellipsis">
-      Returns
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
 </li>
         
           <li class="md-nav__item">
@@ -896,21 +800,6 @@
     </span>
   </a>
   
-    <nav class="md-nav" aria-label="add_layer_control()">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#chartops.folium.Map.add_layer_control--returns" class="md-nav__link">
-    <span class="md-ellipsis">
-      Returns
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
 </li>
         
           <li class="md-nav__item">
@@ -919,39 +808,6 @@
       add_vector()
     </span>
   </a>
-  
-    <nav class="md-nav" aria-label="add_vector()">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#chartops.folium.Map.add_vector--parameters" class="md-nav__link">
-    <span class="md-ellipsis">
-      Parameters
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#chartops.folium.Map.add_vector--returns" class="md-nav__link">
-    <span class="md-ellipsis">
-      Returns
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#chartops.folium.Map.add_vector--raises" class="md-nav__link">
-    <span class="md-ellipsis">
-      Raises
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
   
 </li>
         
@@ -1024,16 +880,12 @@ Map            (<span title="folium.folium.Map">Map</span>)
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Add a basemap to the folium map.</span>
 
-<span class="sd">        Parameters</span>
-<span class="sd">        ----------</span>
-<span class="sd">        basemap_name : str</span>
-<span class="sd">            Name of the basemap to add. Resolved with xyzservices.</span>
-<span class="sd">        **kwargs : dict</span>
-<span class="sd">            Extra kwargs to pass to folium.TileLayer.</span>
+<span class="sd">        Args:</span>
+<span class="sd">            basemap_name (str): Name of the basemap to add. Resolved with xyzservices.</span>
+<span class="sd">            **kwargs (dict): Extra kwargs to pass to basemap_to_tiles.</span>
 
-<span class="sd">        Returns</span>
-<span class="sd">        -------</span>
-<span class="sd">        None</span>
+<span class="sd">        Returns:</span>
+<span class="sd">            None</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">basemap</span> <span class="o">=</span> <span class="n">common</span><span class="o">.</span><span class="n">resolve_basemap_name</span><span class="p">(</span><span class="n">basemap_name</span><span class="p">)</span>
         <span class="n">folium</span><span class="o">.</span><span class="n">TileLayer</span><span class="p">(</span>
@@ -1047,9 +899,8 @@ Map            (<span title="folium.folium.Map">Map</span>)
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Add a layer control widget to the folium map.</span>
 
-<span class="sd">        Returns</span>
-<span class="sd">        -------</span>
-<span class="sd">        None</span>
+<span class="sd">        Returns:</span>
+<span class="sd">            None</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">folium</span><span class="o">.</span><span class="n">LayerControl</span><span class="p">()</span><span class="o">.</span><span class="n">add_to</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
 
@@ -1057,31 +908,20 @@ Map            (<span title="folium.folium.Map">Map</span>)
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Add a vector data layer to the folium map.</span>
 
-<span class="sd">        Parameters</span>
-<span class="sd">        ----------</span>
-<span class="sd">        filepath : Path or str</span>
-<span class="sd">            Local path to the vector dataset or a URL to a remote GeoJSON file.</span>
-<span class="sd">        name : str</span>
-<span class="sd">            Name of the layer to be shown in the layer control.</span>
-<span class="sd">        **kwargs : dict</span>
-<span class="sd">            Additional styling options for the layer. Valid options include:</span>
-<span class="sd">            - color : str, default &#39;blue&#39;</span>
-<span class="sd">                Outline color of the vector features.</span>
-<span class="sd">            - weight : int, default 2</span>
-<span class="sd">                Line weight of the vector features.</span>
-<span class="sd">            - fillOpacity : float, default 0.1</span>
-<span class="sd">                Opacity of the fill. Must be between 0 and 1.</span>
+<span class="sd">        Args:</span>
+<span class="sd">            filepath (Path or str): Path to the vector dataset or URL to a remote file.</span>
+<span class="sd">            name (str): Name of the layer. Defaults to &#39;&#39;..</span>
+<span class="sd">            **kwargs (dict): Additional styling options for the layer. Valid options include:</span>
+<span class="sd">                - color: str (default: &#39;blue&#39;)</span>
+<span class="sd">                - weight: int (default: 2)</span>
+<span class="sd">                - fillOpacity: float (default: 0.1)</span>
 
-<span class="sd">        Returns</span>
-<span class="sd">        -------</span>
-<span class="sd">        None</span>
+<span class="sd">        Returns:</span>
+<span class="sd">            None</span>
 
-<span class="sd">        Raises</span>
-<span class="sd">        ------</span>
-<span class="sd">        FileNotFoundError</span>
-<span class="sd">            If the provided file path does not exist.</span>
-<span class="sd">        ValueError</span>
-<span class="sd">            If styling parameters are invalid.</span>
+<span class="sd">        Raises:</span>
+<span class="sd">            FileNotFoundError: If the provided file path does not exist.</span>
+<span class="sd">            ValueError: If styling parameters are invalid.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">color</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;color&quot;</span><span class="p">,</span> <span class="s2">&quot;blue&quot;</span><span class="p">)</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">color</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
@@ -1147,30 +987,59 @@ Map            (<span title="folium.folium.Map">Map</span>)
     <div class="doc doc-contents ">
 
       <p>Add a basemap to the folium map.</p>
-<h5 id="chartops.folium.Map.add_basemap--parameters">Parameters<a class="headerlink" href="#chartops.folium.Map.add_basemap--parameters" title="Permanent link">&para;</a></h5>
-<p>basemap_name : str
-    Name of the basemap to add. Resolved with xyzservices.
-**kwargs : dict
-    Extra kwargs to pass to folium.TileLayer.</p>
-<h5 id="chartops.folium.Map.add_basemap--returns">Returns<a class="headerlink" href="#chartops.folium.Map.add_basemap--returns" title="Permanent link">&para;</a></h5>
-<p>None</p>
 
+<p><strong>Parameters:</strong></p>
+<table>
+  <thead>
+    <tr>
+      <th>Name</th>
+      <th>Type</th>
+      <th>Description</th>
+      <th>Default</th>
+    </tr>
+  </thead>
+  <tbody>
+      <tr>
+        <td><code>basemap_name</code></td>
+        <td><code>str</code></td>
+        <td><p>Name of the basemap to add. Resolved with xyzservices.</p></td>
+        <td><em>required</em></td>
+      </tr>
+      <tr>
+        <td><code>**kwargs</code></td>
+        <td><code>dict</code></td>
+        <td><p>Extra kwargs to pass to basemap_to_tiles.</p></td>
+        <td><code>{}</code></td>
+      </tr>
+  </tbody>
+</table>
+<p><strong>Returns:</strong></p>
+<table>
+  <thead>
+    <tr>
+      <th>Type</th>
+      <th>Description</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code>None</code></td>
+      <td><p>None</p></td>
+    </tr>
+  </tbody>
+</table>
         <details class="quote">
           <summary>Source code in <code>chartops/folium.py</code></summary>
           <div class="highlight"><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">add_basemap</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">basemap_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Add a basemap to the folium map.</span>
 
-<span class="sd">    Parameters</span>
-<span class="sd">    ----------</span>
-<span class="sd">    basemap_name : str</span>
-<span class="sd">        Name of the basemap to add. Resolved with xyzservices.</span>
-<span class="sd">    **kwargs : dict</span>
-<span class="sd">        Extra kwargs to pass to folium.TileLayer.</span>
+<span class="sd">    Args:</span>
+<span class="sd">        basemap_name (str): Name of the basemap to add. Resolved with xyzservices.</span>
+<span class="sd">        **kwargs (dict): Extra kwargs to pass to basemap_to_tiles.</span>
 
-<span class="sd">    Returns</span>
-<span class="sd">    -------</span>
-<span class="sd">    None</span>
+<span class="sd">    Returns:</span>
+<span class="sd">        None</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">basemap</span> <span class="o">=</span> <span class="n">common</span><span class="o">.</span><span class="n">resolve_basemap_name</span><span class="p">(</span><span class="n">basemap_name</span><span class="p">)</span>
     <span class="n">folium</span><span class="o">.</span><span class="n">TileLayer</span><span class="p">(</span>
@@ -1200,18 +1069,30 @@ Map            (<span title="folium.folium.Map">Map</span>)
     <div class="doc doc-contents ">
 
       <p>Add a layer control widget to the folium map.</p>
-<h5 id="chartops.folium.Map.add_layer_control--returns">Returns<a class="headerlink" href="#chartops.folium.Map.add_layer_control--returns" title="Permanent link">&para;</a></h5>
-<p>None</p>
 
+<p><strong>Returns:</strong></p>
+<table>
+  <thead>
+    <tr>
+      <th>Type</th>
+      <th>Description</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code>None</code></td>
+      <td><p>None</p></td>
+    </tr>
+  </tbody>
+</table>
         <details class="quote">
           <summary>Source code in <code>chartops/folium.py</code></summary>
           <div class="highlight"><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">add_layer_control</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Add a layer control widget to the folium map.</span>
 
-<span class="sd">    Returns</span>
-<span class="sd">    -------</span>
-<span class="sd">    None</span>
+<span class="sd">    Returns:</span>
+<span class="sd">        None</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">folium</span><span class="o">.</span><span class="n">LayerControl</span><span class="p">()</span><span class="o">.</span><span class="n">add_to</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
 </code></pre></div>
@@ -1235,58 +1116,95 @@ Map            (<span title="folium.folium.Map">Map</span>)
     <div class="doc doc-contents ">
 
       <p>Add a vector data layer to the folium map.</p>
-<h5 id="chartops.folium.Map.add_vector--parameters">Parameters<a class="headerlink" href="#chartops.folium.Map.add_vector--parameters" title="Permanent link">&para;</a></h5>
-<p>filepath : Path or str
-    Local path to the vector dataset or a URL to a remote GeoJSON file.
-name : str
-    Name of the layer to be shown in the layer control.
-**kwargs : dict
-    Additional styling options for the layer. Valid options include:
-    - color : str, default 'blue'
-        Outline color of the vector features.
-    - weight : int, default 2
-        Line weight of the vector features.
-    - fillOpacity : float, default 0.1
-        Opacity of the fill. Must be between 0 and 1.</p>
-<h5 id="chartops.folium.Map.add_vector--returns">Returns<a class="headerlink" href="#chartops.folium.Map.add_vector--returns" title="Permanent link">&para;</a></h5>
-<p>None</p>
-<h5 id="chartops.folium.Map.add_vector--raises">Raises<a class="headerlink" href="#chartops.folium.Map.add_vector--raises" title="Permanent link">&para;</a></h5>
-<p>FileNotFoundError
-    If the provided file path does not exist.
-ValueError
-    If styling parameters are invalid.</p>
 
+<p><strong>Parameters:</strong></p>
+<table>
+  <thead>
+    <tr>
+      <th>Name</th>
+      <th>Type</th>
+      <th>Description</th>
+      <th>Default</th>
+    </tr>
+  </thead>
+  <tbody>
+      <tr>
+        <td><code>filepath</code></td>
+        <td><code>Path or str</code></td>
+        <td><p>Path to the vector dataset or URL to a remote file.</p></td>
+        <td><em>required</em></td>
+      </tr>
+      <tr>
+        <td><code>name</code></td>
+        <td><code>str</code></td>
+        <td><p>Name of the layer. Defaults to ''..</p></td>
+        <td><em>required</em></td>
+      </tr>
+      <tr>
+        <td><code>**kwargs</code></td>
+        <td><code>dict</code></td>
+        <td><p>Additional styling options for the layer. Valid options include:
+- color: str (default: 'blue')
+- weight: int (default: 2)
+- fillOpacity: float (default: 0.1)</p></td>
+        <td><code>{}</code></td>
+      </tr>
+  </tbody>
+</table>
+<p><strong>Returns:</strong></p>
+<table>
+  <thead>
+    <tr>
+      <th>Type</th>
+      <th>Description</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code>None</code></td>
+      <td><p>None</p></td>
+    </tr>
+  </tbody>
+</table>
+<p><strong>Exceptions:</strong></p>
+<table>
+  <thead>
+    <tr>
+      <th>Type</th>
+      <th>Description</th>
+    </tr>
+  </thead>
+  <tbody>
+      <tr>
+        <td><code>FileNotFoundError</code></td>
+        <td><p>If the provided file path does not exist.</p></td>
+      </tr>
+      <tr>
+        <td><code>ValueError</code></td>
+        <td><p>If styling parameters are invalid.</p></td>
+      </tr>
+  </tbody>
+</table>
         <details class="quote">
           <summary>Source code in <code>chartops/folium.py</code></summary>
           <div class="highlight"><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">add_vector</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">filepath</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Path</span><span class="p">,</span> <span class="nb">str</span><span class="p">],</span> <span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Add a vector data layer to the folium map.</span>
 
-<span class="sd">    Parameters</span>
-<span class="sd">    ----------</span>
-<span class="sd">    filepath : Path or str</span>
-<span class="sd">        Local path to the vector dataset or a URL to a remote GeoJSON file.</span>
-<span class="sd">    name : str</span>
-<span class="sd">        Name of the layer to be shown in the layer control.</span>
-<span class="sd">    **kwargs : dict</span>
-<span class="sd">        Additional styling options for the layer. Valid options include:</span>
-<span class="sd">        - color : str, default &#39;blue&#39;</span>
-<span class="sd">            Outline color of the vector features.</span>
-<span class="sd">        - weight : int, default 2</span>
-<span class="sd">            Line weight of the vector features.</span>
-<span class="sd">        - fillOpacity : float, default 0.1</span>
-<span class="sd">            Opacity of the fill. Must be between 0 and 1.</span>
+<span class="sd">    Args:</span>
+<span class="sd">        filepath (Path or str): Path to the vector dataset or URL to a remote file.</span>
+<span class="sd">        name (str): Name of the layer. Defaults to &#39;&#39;..</span>
+<span class="sd">        **kwargs (dict): Additional styling options for the layer. Valid options include:</span>
+<span class="sd">            - color: str (default: &#39;blue&#39;)</span>
+<span class="sd">            - weight: int (default: 2)</span>
+<span class="sd">            - fillOpacity: float (default: 0.1)</span>
 
-<span class="sd">    Returns</span>
-<span class="sd">    -------</span>
-<span class="sd">    None</span>
+<span class="sd">    Returns:</span>
+<span class="sd">        None</span>
 
-<span class="sd">    Raises</span>
-<span class="sd">    ------</span>
-<span class="sd">    FileNotFoundError</span>
-<span class="sd">        If the provided file path does not exist.</span>
-<span class="sd">    ValueError</span>
-<span class="sd">        If styling parameters are invalid.</span>
+<span class="sd">    Raises:</span>
+<span class="sd">        FileNotFoundError: If the provided file path does not exist.</span>
+<span class="sd">        ValueError: If styling parameters are invalid.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">color</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;color&quot;</span><span class="p">,</span> <span class="s2">&quot;blue&quot;</span><span class="p">)</span>
     <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">color</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
