@@ -81,6 +81,9 @@ nav:
     - Report Issues: https://github.com/Thomatous/Chartops/issues
     - Examples:
         - examples/intro.ipynb
+        - examples/chartops.ipynb
+        - examples/folium.ipynb
     - API Reference:
-          - chartops module: chartops.md
+          - chartops ipyleaflet map: chartops.md
+          - chartops folium map: folium.md
           - common module: common.md
