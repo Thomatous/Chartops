@@ -154,3 +154,7 @@ class TestChartops(unittest.TestCase):
                 "https://github.com/jupyter-widgets/ipyleaflet/raw/master/examples/europe_110.geo.json",
                 **{"fillOpacity": 2},
             )
+
+    def test_add_raster(self) -> None:
+        url = "https://github.com/opengeos/datasets/releases/download/raster/dem_90m.tif"
+        self.map.add_raster(url)

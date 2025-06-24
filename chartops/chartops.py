@@ -1,9 +1,15 @@
+import rasterio
+import numpy as np
+import geopandas as gpd
 from typing import Union
 from pathlib import Path
 from ipyleaflet import Map as iPyLeafletMap
-from ipyleaflet import LayersControl, basemap_to_tiles, GeoJSON
+from ipyleaflet import LayersControl, basemap_to_tiles, GeoJSON, ImageOverlay
 from chartops import common
-import geopandas as gpd
+from rasterio.warp import transform_bounds
+import base64
+import io
+from PIL import Image
 
 
 class Map(iPyLeafletMap):
@@ -89,3 +95,56 @@ class Map(iPyLeafletMap):
             self.add(layer)
         except Exception as e:
             raise ValueError(f"Failed to add vector layer from {filepath}: {e}")
+
+    def add_raster(self, url: Union[str, Path], opacity: float = 1.0, name: str = '', colormap: Union[dict, str] = {}, **kwargs) -> None:
+        with rasterio.open(url) as src:
+                array = src.read()
+                bounds = src.bounds
+
+                # Convert bounds to lat/lon if necessary
+                if src.crs != "EPSG:4326":
+                    bounds_ll = transform_bounds(src.crs, "EPSG:4326", *bounds)
+                else:
+                    bounds_ll = bounds
+
+                # Prepare image
+                if array.shape[0] == 1:
+                    band = array[0].astype(np.float32)
+                    band_min, band_max = np.percentile(band[band != src.nodata], (2, 98))
+                    norm = np.clip((band - band_min) / (band_max - band_min), 0, 1)
+                    img_data = (norm * 255).astype(np.uint8)
+
+                    if colormap:
+                        import matplotlib.cm as cm
+                        if isinstance(colormap, str):
+                            cmap = cm.get_cmap(colormap)
+                        else:
+                            from matplotlib.colors import LinearSegmentedColormap
+                            cmap = LinearSegmentedColormap.from_list("custom", list(colormap.values()))
+                        rgba = cmap(img_data / 255.0, bytes=True)
+                        img = Image.fromarray(rgba, 'RGBA')
+                    else:
+                        img = Image.fromarray(img_data, 'L').convert("RGBA")
+
+                elif array.shape[0] >= 3:
+                    rgb = array[:3].astype(np.float32)
+                    for i in range(3):
+                        b = rgb[i]
+                        b_min, b_max = np.percentile(b[b != src.nodata], (2, 98))
+                        rgb[i] = np.clip((b - b_min) / (b_max - b_min), 0, 1)
+                    img = np.transpose((rgb * 255).astype(np.uint8), (1, 2, 0))
+                    img = Image.fromarray(img, 'RGB').convert("RGBA")
+                else:
+                    raise ValueError("Unsupported raster format")
+
+                # Convert image to base64 PNG
+                buffer = io.BytesIO()
+                img.save(buffer, format="PNG")
+                data_uri = "data:image/png;base64," + base64.b64encode(buffer.getvalue()).decode()
+
+                image_bounds = [(bounds_ll[1], bounds_ll[0]), (bounds_ll[3], bounds_ll[2])]
+                overlay = ImageOverlay(url=data_uri, bounds=image_bounds, opacity=opacity, name=name or Path(url).stem)
+                self.add(overlay)
+
+                # Fit map to the raster bounds
+                self.fit_bounds(image_bounds)
