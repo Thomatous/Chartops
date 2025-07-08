@@ -1,17 +1,9 @@
-import rasterio
 import geopandas as gpd
 from typing import Union
 from pathlib import Path
 from ipyleaflet import Map as iPyLeafletMap
 from ipyleaflet import LayersControl, basemap_to_tiles, GeoJSON, ImageOverlay
 from chartops import common
-
-import numpy as np
-from io import BytesIO
-from base64 import b64encode
-from PIL import Image
-import requests
-import tempfile
 
 
 class Map(iPyLeafletMap):
@@ -98,12 +90,34 @@ class Map(iPyLeafletMap):
         except Exception as e:
             raise ValueError(f"Failed to add vector layer from {filepath}: {e}")
 
-
-    def add_raster(self, url: Union[str, Path], opacity: float = 1.0, name: str = '', colormap: Union[dict, str] = {}, **kwargs) -> None:
+    def add_raster(
+            self,
+            url: Union[str, Path],
+            name: str = "",
+            opacity: float = 1.0,
+            colormap: Union[str, dict] = None,
+            indexes: Union[int, list[int]] = None,
+            vmin: float = None,
+            vmax: float = None,
+            nodata: Union[int, float] = None,
+            **kwargs
+        ) -> None:
+        
         from localtileserver import TileClient, get_leaflet_tile_layer
-        client = TileClient(url)
-        print(client.get_tile_url())
+        client = TileClient(str(url))
+        
+        self.center = client.center()
+        self.zoom = client.default_zoom
+
         tile_layer = get_leaflet_tile_layer(
-            client, indexes=1, vmin=-5000, vmax=5000, opacity=0.65
+            client,
+            indexes=indexes,
+            colormap=colormap,
+            vmin=vmin,
+            vmax=vmax,
+            nodata=nodata,
+            opacity=opacity,
+            **kwargs
         )
+        tile_layer.name = name or Path(url).stem
         self.add(tile_layer)
