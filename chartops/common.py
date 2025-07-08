@@ -1,9 +1,6 @@
-import numpy as np
 import xyzservices.providers as xyz
-from typing import Any
-from PIL import Image
-from io import BytesIO
-from base64 import b64encode
+from typing import Union, Any
+from matplotlib.colors import LinearSegmentedColormap
 
 
 def resolve_basemap_name(basemap_name: str) -> Any:
@@ -28,26 +25,28 @@ def resolve_basemap_name(basemap_name: str) -> Any:
     return provider
 
 
-def encode_array(array: np.ndarray) -> str:
-    array = np.moveaxis(array, 0, -1)
-    nan_mask = ~np.isnan(array) * 1 
-    nan_mask *= 255
-    nan_mask = nan_mask.astype(np.uint8)
-    array_max = np.nanmax(array)
-    array_min = np.nanmin(array)
+def resolve_colormap(colormap: Union[str, dict, None]) -> Any:
+    """
+    Resolve a colormap input to a matplotlib colormap object or string name
+    usable by localtileserver.
 
-    array = np.nan_to_num(array)
+    Args:
+        colormap (str or dict or matplotlib.colors.Colormap or None): The input colormap.
+            - If dict, creates and returns a LinearSegmentedColormap.
+            - If str, returns as is (assumed built-in matplotlib colormap name).
+            - If None, returns None.
 
-    array = np.clip((array - array_min) / (array_max - array_min) * 255, 0, 255)
-    array = array.astype(np.uint8)
-    
-    image = Image.fromarray(np.squeeze(np.stack([array, array, array, nan_mask], axis=-1)), mode="RGBA")
-    
-    #Convert the image to bytes and encode in the url
-    s = BytesIO()
-    image.save(s, 'png')
-    data = b64encode(s.getvalue())
-    data = data.decode('ascii')
-    imgurl = 'data:image/png;base64,' + data
+    Returns:
+        matplotlib.colors.Colormap or str or None: The resolved colormap suitable
+        for passing to localtileserver.
 
-    return imgurl
+    Raises:
+        ValueError: If colormap dict is invalid or unknown type is passed.
+    """
+    if colormap is None:
+        return None
+    if isinstance(colormap, dict):
+        return LinearSegmentedColormap("custom", colormap)
+    if isinstance(colormap, str):
+        return colormap
+    raise ValueError(f"Invalid colormap argument: expected str, dict, or matplotlib.colors.Colormap, got {type(colormap)}")

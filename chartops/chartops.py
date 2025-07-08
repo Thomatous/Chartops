@@ -6,6 +6,7 @@ from ipyleaflet import LayersControl, basemap_to_tiles, GeoJSON, ImageOverlay
 from chartops import common
 
 
+
 class Map(iPyLeafletMap):
     def add_basemap(self, basemap_name: str, **kwargs) -> None:
         """
@@ -90,29 +91,20 @@ class Map(iPyLeafletMap):
         except Exception as e:
             raise ValueError(f"Failed to add vector layer from {filepath}: {e}")
 
-    def add_raster(
-            self,
-            url: Union[str, Path],
-            name: str = "",
-            opacity: float = 1.0,
-            colormap: Union[str, dict] = None,
-            indexes: Union[int, list[int]] = None,
-            vmin: float = None,
-            vmax: float = None,
-            nodata: Union[int, float] = None,
-            **kwargs
-        ) -> None:
-        
+    def add_raster(self, url, name="", opacity=1.0, colormap=None, indexes=None, vmin=None, vmax=None, nodata=None, **kwargs):
         from localtileserver import TileClient, get_leaflet_tile_layer
+
+        cm_arg = common.resolve_colormap(colormap)
+
         client = TileClient(str(url))
-        
+
         self.center = client.center()
         self.zoom = client.default_zoom
 
         tile_layer = get_leaflet_tile_layer(
             client,
             indexes=indexes,
-            colormap=colormap,
+            colormap=cm_arg,
             vmin=vmin,
             vmax=vmax,
             nodata=nodata,
