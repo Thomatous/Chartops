@@ -2,6 +2,7 @@ from typing import Union, Any, Optional
 from matplotlib.colors import Colormap, LinearSegmentedColormap
 from matplotlib import colormaps
 
+
 def resolve_basemap_name(basemap_name: str) -> Any:
     """
     Resolve a basemap name into an xyzservices object.
@@ -24,6 +25,7 @@ def resolve_basemap_name(basemap_name: str) -> Any:
         else:
             raise AttributeError(f"Unsupported basemap: {basemap_name}")
     return provider
+
 
 def resolve_colormap(colormap: Optional[Union[str, dict]]) -> Optional[Colormap]:
     """
@@ -48,7 +50,7 @@ def resolve_colormap(colormap: Optional[Union[str, dict]]) -> Optional[Colormap]
     if isinstance(colormap, dict):
         try:
             custom_colormap = LinearSegmentedColormap("custom", colormap)
-            custom_colormap._init() # Forces colormap dict validation
+            custom_colormap._init()  # Forces colormap dict validation
             return custom_colormap
         except Exception as e:
             raise ValueError(f"Invalid colormap dictionary format: {e}")
@@ -57,6 +59,10 @@ def resolve_colormap(colormap: Optional[Union[str, dict]]) -> Optional[Colormap]
         if colormap in colormaps:
             return colormaps[colormap]
         else:
-            raise ValueError(f"Invalid colormap name '{colormap}'. Must be one of: {list(colormaps)}")
+            raise ValueError(
+                f"Invalid colormap name '{colormap}'. Must be one of: {list(colormaps)}"
+            )
 
-    raise TypeError(f"Invalid colormap type: expected str, dict, or Colormap, got {type(colormap)}")
+    raise TypeError(
+        f"Invalid colormap type: expected str, dict, or Colormap, got {type(colormap)}"
+    )

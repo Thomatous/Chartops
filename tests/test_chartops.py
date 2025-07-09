@@ -156,13 +156,17 @@ class TestChartops(unittest.TestCase):
             )
 
     def test_add_raster_from_url(self):
-        url = "https://github.com/opengeos/datasets/releases/download/raster/dem_90m.tif"
+        url = (
+            "https://github.com/opengeos/datasets/releases/download/raster/dem_90m.tif"
+        )
         self.map.add_raster(url, opacity=0.8)
         layer = self.map.layers[-1]
         self.assertEqual(layer.opacity, 0.8)
 
     def test_add_raster_with_custom_name(self):
-        url = "https://github.com/opengeos/datasets/releases/download/raster/dem_90m.tif"
+        url = (
+            "https://github.com/opengeos/datasets/releases/download/raster/dem_90m.tif"
+        )
         custom_name = "Elevation Model"
         self.map.add_raster(url, opacity=1.0, name=custom_name)
         layer = self.map.layers[-1]
@@ -173,6 +177,8 @@ class TestChartops(unittest.TestCase):
             self.map.add_raster("non_existent_file.tif", opacity=0.9)
 
     def test_add_raster_invalid_opacity(self):
-        url = "https://github.com/opengeos/datasets/releases/download/raster/dem_90m.tif"
+        url = (
+            "https://github.com/opengeos/datasets/releases/download/raster/dem_90m.tif"
+        )
         with self.assertRaises(ValueError):
             self.map.add_raster(url, opacity=1.5)

@@ -90,13 +90,13 @@ class Map(iPyLeafletMap):
         except Exception as e:
             raise ValueError(f"Failed to add vector layer from {filepath}: {e}")
 
-    def add_raster( 
-        self, 
-        url: Union[str, Path], 
-        opacity: float, 
-        name: Optional[str] = None, 
-        colormap: Optional[Union[str, dict]] = None, 
-        **kwargs
+    def add_raster(
+        self,
+        url: Union[str, Path],
+        opacity: float,
+        name: Optional[str] = None,
+        colormap: Optional[Union[str, dict]] = None,
+        **kwargs,
     ) -> None:
         """
         Add a raster layer to the map using a local or remote tile source.
@@ -118,17 +118,14 @@ class Map(iPyLeafletMap):
 
         colormap_arg = common.resolve_colormap(colormap)
 
-        try: 
+        try:
             client = TileClient(str(url))
             self.center = client.center()
             self.zoom = client.default_zoom
             tile_layer = get_leaflet_tile_layer(
-                client,
-                colormap=colormap_arg,
-                opacity=opacity,
-                **kwargs
+                client, colormap=colormap_arg, opacity=opacity, **kwargs
             )
-            tile_layer.name = name or ''
+            tile_layer.name = name or ""
             self.add(tile_layer)
         except Exception as e:
             raise ValueError(f"Failed to add raster layer: {e}")
