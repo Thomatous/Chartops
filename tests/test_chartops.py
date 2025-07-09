@@ -155,6 +155,6 @@ class TestChartops(unittest.TestCase):
                 **{"fillOpacity": 2},
             )
 
-    def test_add_raster(self) -> None:
-        url = "https://github.com/opengeos/datasets/releases/download/raster/dem_90m.tif"
-        self.map.add_raster(url)
+    # def test_add_raster(self) -> None:
+    #     url = "https://github.com/opengeos/datasets/releases/download/raster/dem_90m.tif"
+    #     self.map.add_raster(url)

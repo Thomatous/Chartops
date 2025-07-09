@@ -1,7 +1,6 @@
-import xyzservices.providers as xyz
 from typing import Union, Any
-from matplotlib.colors import LinearSegmentedColormap
-
+from matplotlib.colors import Colormap, LinearSegmentedColormap
+from matplotlib import colormaps
 
 def resolve_basemap_name(basemap_name: str) -> Any:
     """
@@ -16,6 +15,8 @@ def resolve_basemap_name(basemap_name: str) -> Any:
     Raises:
         AttributeError: If the basemap name is not valid.
     """
+    import xyzservices.providers as xyz
+
     provider = xyz
     for part in basemap_name.split("."):
         if hasattr(provider, part):
@@ -24,29 +25,34 @@ def resolve_basemap_name(basemap_name: str) -> Any:
             raise AttributeError(f"Unsupported basemap: {basemap_name}")
     return provider
 
-
-def resolve_colormap(colormap: Union[str, dict, None]) -> Any:
+def resolve_colormap(colormap: Union[str, dict]) -> Colormap:
     """
-    Resolve a colormap input to a matplotlib colormap object or string name
-    usable by localtileserver.
+    Resolve a colormap input to a matplotlib colormap object.
 
     Args:
-        colormap (str or dict or matplotlib.colors.Colormap or None): The input colormap.
-            - If dict, creates and returns a LinearSegmentedColormap.
-            - If str, returns as is (assumed built-in matplotlib colormap name).
-            - If None, returns None.
+        colormap (str or dict): The input colormap.
+            - If dict: Creates and returns a LinearSegmentedColormap.
+            - If str: Returns the corresponding built-in matplotlib colormap.
 
     Returns:
-        matplotlib.colors.Colormap or str or None: The resolved colormap suitable
-        for passing to localtileserver.
+        matplotlib.colors.Colormap: A valid colormap object.
 
     Raises:
-        ValueError: If colormap dict is invalid or unknown type is passed.
+        ValueError: If the colormap dictionary is invalid or the string is not a recognized colormap name.
+        TypeError: If the input type is not str or dict.
     """
-    if colormap is None:
-        return None
     if isinstance(colormap, dict):
-        return LinearSegmentedColormap("custom", colormap)
+        try:
+            custom_colormap = LinearSegmentedColormap("custom", colormap)
+            custom_colormap._init()
+            return custom_colormap
+        except Exception as e:
+            raise ValueError(f"Invalid colormap dictionary format: {e}")
+
     if isinstance(colormap, str):
-        return colormap
-    raise ValueError(f"Invalid colormap argument: expected str, dict, or matplotlib.colors.Colormap, got {type(colormap)}")
+        if colormap in colormaps:
+            return colormaps[colormap]
+        else:
+            raise ValueError(f"Invalid colormap name '{colormap}'. Must be one of: {list(colormaps)}")
+
+    raise TypeError(f"Invalid colormap type: expected str, dict, or Colormap, got {type(colormap)}")
