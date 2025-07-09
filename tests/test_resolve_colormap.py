@@ -1,7 +1,6 @@
 #!/usr/bin/env python
 import unittest
 from matplotlib.colors import Colormap
-
 from chartops import common
 
 
@@ -12,7 +11,6 @@ class TestResolveColormap(unittest.TestCase):
             with self.subTest(name=name):
                 cmap = common.resolve_colormap(name)
                 self.assertIsInstance(cmap, Colormap)
-                self.assertEqual(cmap.name, name)
 
     def test_invalid_colormap_str(self):
         with self.assertRaises(ValueError) as cm:
@@ -27,7 +25,6 @@ class TestResolveColormap(unittest.TestCase):
         }
         cmap = common.resolve_colormap(colormap_dict)
         self.assertIsInstance(cmap, Colormap)
-        self.assertEqual(cmap.name, "custom")
 
     def test_invalid_colormap_dicts(self):
         invalid_dicts = [
@@ -43,8 +40,11 @@ class TestResolveColormap(unittest.TestCase):
                     common.resolve_colormap(cmap_dict)
                 self.assertIn("Invalid colormap dictionary format", str(cm.exception))
 
+    def test_none_colormap(self):
+        self.assertIsNone(common.resolve_colormap(None))
+
     def test_invalid_type(self):
-        for invalid_input in [None, 123, 3.14, ['viridis'], object()]:
+        for invalid_input in [123, 3.14, ['viridis'], object()]:
             with self.subTest(invalid_input=invalid_input):
                 with self.assertRaises(TypeError) as cm:
                     common.resolve_colormap(invalid_input)

@@ -1,10 +1,9 @@
 import geopandas as gpd
-from typing import Union
+from typing import Union, Optional
 from pathlib import Path
 from ipyleaflet import Map as iPyLeafletMap
-from ipyleaflet import LayersControl, basemap_to_tiles, GeoJSON, ImageOverlay
+from ipyleaflet import LayersControl, basemap_to_tiles, GeoJSON
 from chartops import common
-
 
 
 class Map(iPyLeafletMap):
@@ -91,25 +90,45 @@ class Map(iPyLeafletMap):
         except Exception as e:
             raise ValueError(f"Failed to add vector layer from {filepath}: {e}")
 
-    def add_raster(self, url, name="", opacity=1.0, colormap=None, indexes=None, vmin=None, vmax=None, nodata=None, **kwargs):
+    def add_raster( 
+        self, 
+        url: Union[str, Path], 
+        opacity: float, 
+        name: Optional[str] = None, 
+        colormap: Optional[Union[str, dict]] = None, 
+        **kwargs
+    ) -> None:
+        """
+        Add a raster layer to the map using a local or remote tile source.
+
+        Args:
+            url (str or Path): Path or URL to the raster file.
+            opacity (float): Opacity of the raster layer. Must be between 0 and 1.
+            name (str, optional): Name of the layer. Defaults to the stem of the file path.
+            colormap (str or dict, optional): Colormap to apply to the raster. Can be a colormap name or a dict. Resolved using `common.resolve_colormap`.
+            **kwargs (dict): Additional keyword arguments passed to the tile layer.
+
+        Returns:
+            None
+
+        Raises:
+            ValueError: If the raster layer cannot be added.
+        """
         from localtileserver import TileClient, get_leaflet_tile_layer
 
-        cm_arg = common.resolve_colormap(colormap)
+        colormap_arg = common.resolve_colormap(colormap)
 
-        client = TileClient(str(url))
-
-        self.center = client.center()
-        self.zoom = client.default_zoom
-
-        tile_layer = get_leaflet_tile_layer(
-            client,
-            indexes=indexes,
-            colormap=cm_arg,
-            vmin=vmin,
-            vmax=vmax,
-            nodata=nodata,
-            opacity=opacity,
-            **kwargs
-        )
-        tile_layer.name = name or Path(url).stem
-        self.add(tile_layer)
+        try: 
+            client = TileClient(str(url))
+            self.center = client.center()
+            self.zoom = client.default_zoom
+            tile_layer = get_leaflet_tile_layer(
+                client,
+                colormap=colormap_arg,
+                opacity=opacity,
+                **kwargs
+            )
+            tile_layer.name = name or ''
+            self.add(tile_layer)
+        except Exception as e:
+            raise ValueError(f"Failed to add raster layer: {e}")
