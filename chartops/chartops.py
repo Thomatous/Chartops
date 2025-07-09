@@ -1,8 +1,8 @@
 import geopandas as gpd
-from typing import Union, Optional
+from typing import Union, Optional, Tuple
 from pathlib import Path
 from ipyleaflet import Map as iPyLeafletMap
-from ipyleaflet import LayersControl, basemap_to_tiles, GeoJSON
+from ipyleaflet import LayersControl, basemap_to_tiles, GeoJSON, ImageOverlay
 from chartops import common
 
 
@@ -129,3 +129,13 @@ class Map(iPyLeafletMap):
             self.add(tile_layer)
         except Exception as e:
             raise ValueError(f"Failed to add raster layer: {e}")
+
+    def add_image(self, url: Union[str, Path], bounds: Tuple[float, float, float, float], opacity: float,  **kwargs) -> None:
+        image = ImageOverlay(
+            url=url,
+            bounds=bounds,
+            opacity=opacity,
+            **kwargs
+        )
+        image.opacity = opacity
+        self.add(image)
