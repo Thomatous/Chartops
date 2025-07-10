@@ -190,7 +190,10 @@ class TestChartops(unittest.TestCase):
         url = (
             "https://github.com/opengeos/datasets/releases/download/raster/dem_90m.tif"
         )
-        with patch("chartops.common.resolve_colormap", side_effect=ValueError("Invalid colormap")):
+        with patch(
+            "chartops.common.resolve_colormap",
+            side_effect=ValueError("Invalid colormap"),
+        ):
             with self.assertRaises(ValueError) as cm:
                 self.map.add_raster(url, opacity=0.7, colormap="invalid_colormap")
             self.assertIn("Failed to resolve colormap", str(cm.exception))
@@ -203,7 +206,6 @@ class TestChartops(unittest.TestCase):
         self.assertIsInstance(layer, ImageOverlay)
         self.assertEqual(layer.url, url)
 
-
     def test_add_image_valid_local_file(self):
         with tempfile.TemporaryDirectory() as tmpdir:
             image_data = np.random.rand(50, 50)
@@ -215,7 +217,6 @@ class TestChartops(unittest.TestCase):
             layer = self.map.layers[-1]
             self.assertIsInstance(layer, ImageOverlay)
             self.assertEqual(layer.url, str(image_path))
-
 
     def test_add_image_invalid_bounds_type(self):
         url = "https://i.imgur.com/06Q1fSz.png"
@@ -252,4 +253,3 @@ class TestChartops(unittest.TestCase):
         bounds = (-90, -180, 90, 180)
         with self.assertRaises(FileNotFoundError):
             self.map.add_image(path, bounds=bounds, opacity=0.5)
-

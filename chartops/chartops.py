@@ -144,7 +144,13 @@ class Map(iPyLeafletMap):
         except Exception as e:
             raise ValueError(f"Failed to add raster layer: {e}")
 
-    def add_image(self, url: Union[str, Path], bounds: Tuple[int, int, int, int], opacity: float,  **kwargs) -> None:
+    def add_image(
+        self,
+        url: Union[str, Path],
+        bounds: Tuple[int, int, int, int],
+        opacity: float,
+        **kwargs,
+    ) -> None:
         """
         Add a static image overlay to the map.
 
@@ -164,19 +170,20 @@ class Map(iPyLeafletMap):
         if isinstance(url, Path) and not url.exists():
             raise FileNotFoundError(f"Image file not found: {url}")
 
-        if not isinstance(bounds, tuple) or len(bounds) != 4 or not all(isinstance(b, int) for b in bounds):
-            raise TypeError("bounds must be a tuple of four integer values (south, west, north, east)")
+        if (
+            not isinstance(bounds, tuple)
+            or len(bounds) != 4
+            or not all(isinstance(b, int) for b in bounds)
+        ):
+            raise TypeError(
+                "bounds must be a tuple of four integer values (south, west, north, east)"
+            )
 
         if not isinstance(opacity, (int, float)) or not (0 <= opacity <= 1):
             raise TypeError("opacity must be a float between 0 and 1")
 
         try:
-            image = ImageOverlay(
-                url=str(url),
-                bounds=bounds,
-                opacity=opacity,
-                **kwargs
-            )
+            image = ImageOverlay(url=str(url), bounds=bounds, opacity=opacity, **kwargs)
             self.add(image)
         except Exception as e:
             raise ValueError(f"Failed to add image overlay: {e}")
