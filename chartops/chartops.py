@@ -144,19 +144,13 @@ class Map(iPyLeafletMap):
         except Exception as e:
             raise ValueError(f"Failed to add raster layer: {e}")
 
-    def add_image(
-        self,
-        url: Union[str, Path],
-        bounds: Tuple[int, int, int, int],
-        opacity: float,
-        **kwargs,
-    ) -> None:
+    def add_image(self, url: Union[str, Path], bounds: Tuple[Tuple[float, float], Tuple[float, float]], opacity: float, **kwargs) -> None:
         """
         Add a static image overlay to the map.
 
         Args:
             url (str or Path): URL or path to the image to overlay.
-            bounds (tuple): A tuple of (south, west, north, east) coordinates defining the bounding box of the image.
+            bounds (tuple): A tuple of ((south, west), (north, east)) coordinates defining the bounding box of the image.
             opacity (float): Opacity of the image overlay. Must be between 0 and 1.
             **kwargs (dict): Additional keyword arguments passed to ImageOverlay.
 
@@ -164,26 +158,30 @@ class Map(iPyLeafletMap):
             None
 
         Raises:
-            ValueError: If the bounds are not a tuple of four floats, or if the opacity is invalid.
+            ValueError: If the bounds are not in correct format or opacity is invalid.
             FileNotFoundError: If the local image path does not exist.
         """
         if isinstance(url, Path) and not url.exists():
             raise FileNotFoundError(f"Image file not found: {url}")
 
         if (
-            not isinstance(bounds, tuple)
-            or len(bounds) != 4
-            or not all(isinstance(b, int) for b in bounds)
+            not isinstance(bounds, tuple) or
+            len(bounds) != 2 or
+            not all(isinstance(pair, tuple) and len(pair) == 2 for pair in bounds) or
+            not all(isinstance(coord, (int, float)) for pair in bounds for coord in pair)
         ):
-            raise TypeError(
-                "bounds must be a tuple of four integer values (south, west, north, east)"
-            )
+            raise TypeError("bounds must be a tuple of two (lat, lon) tuples: ((south, west), (north, east))")
 
         if not isinstance(opacity, (int, float)) or not (0 <= opacity <= 1):
             raise TypeError("opacity must be a float between 0 and 1")
 
         try:
-            image = ImageOverlay(url=str(url), bounds=bounds, opacity=opacity, **kwargs)
+            image = ImageOverlay(
+                url=str(url),
+                bounds=bounds,
+                opacity=opacity,
+                **kwargs
+            )
             self.add(image)
         except Exception as e:
             raise ValueError(f"Failed to add image overlay: {e}")
