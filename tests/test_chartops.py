@@ -5,12 +5,14 @@
 
 import unittest
 import tempfile
-from pathlib import Path
-
-from chartops import chartops
-from ipyleaflet import LayersControl, GeoJSON
+import numpy as np
+import matplotlib.pyplot as plt
 import pandas as pd
 import geopandas as gpd
+from pathlib import Path
+from chartops import chartops
+from ipyleaflet import LayersControl, GeoJSON, ImageOverlay
+from unittest.mock import patch
 
 
 class TestChartops(unittest.TestCase):
@@ -173,12 +175,81 @@ class TestChartops(unittest.TestCase):
         self.assertEqual(layer.name, custom_name)
 
     def test_add_raster_invalid_path(self):
-        with self.assertRaises(Exception):
-            self.map.add_raster("non_existent_file.tif", opacity=0.9)
+        path = Path("non_existent_file.tif")
+        with self.assertRaises(FileNotFoundError):
+            self.map.add_raster(path, opacity=0.9)
 
-    def test_add_raster_invalid_opacity(self):
+    def test_add_raster_invalid_opacity_type(self):
         url = (
             "https://github.com/opengeos/datasets/releases/download/raster/dem_90m.tif"
         )
         with self.assertRaises(ValueError):
-            self.map.add_raster(url, opacity=1.5)
+            self.map.add_raster(url, opacity="high")
+
+    def test_add_raster_invalid_colormap(self):
+        url = (
+            "https://github.com/opengeos/datasets/releases/download/raster/dem_90m.tif"
+        )
+        with patch("chartops.common.resolve_colormap", side_effect=ValueError("Invalid colormap")):
+            with self.assertRaises(ValueError) as cm:
+                self.map.add_raster(url, opacity=0.7, colormap="invalid_colormap")
+            self.assertIn("Failed to resolve colormap", str(cm.exception))
+
+    def test_add_image_valid_remote_url(self):
+        url = "https://i.imgur.com/06Q1fSz.png"
+        bounds = (-90, -180, 90, 180)
+        self.map.add_image(url, bounds=bounds, opacity=0.6)
+        layer = self.map.layers[-1]
+        self.assertIsInstance(layer, ImageOverlay)
+        self.assertEqual(layer.url, url)
+
+
+    def test_add_image_valid_local_file(self):
+        with tempfile.TemporaryDirectory() as tmpdir:
+            image_data = np.random.rand(50, 50)
+            image_path = Path(tmpdir) / "test.png"
+            plt.imsave(image_path, image_data)
+
+            bounds = (-10, -10, 10, 10)
+            self.map.add_image(image_path, bounds=bounds, opacity=0.8)
+            layer = self.map.layers[-1]
+            self.assertIsInstance(layer, ImageOverlay)
+            self.assertEqual(layer.url, str(image_path))
+
+
+    def test_add_image_invalid_bounds_type(self):
+        url = "https://i.imgur.com/06Q1fSz.png"
+        bounds = "not-a-tuple"
+        with self.assertRaises(TypeError):
+            self.map.add_image(url, bounds=bounds, opacity=0.5)
+
+    def test_add_image_bounds_wrong_length(self):
+        url = "https://i.imgur.com/06Q1fSz.png"
+        bounds = (-90, -180, 90)
+        with self.assertRaises(TypeError):
+            self.map.add_image(url, bounds=bounds, opacity=0.5)
+
+    def test_add_image_bounds_non_numeric(self):
+        url = "https://i.imgur.com/06Q1fSz.png"
+        bounds = ("south", "west", "north", "east")
+        with self.assertRaises(TypeError):
+            self.map.add_image(url, bounds=bounds, opacity=0.5)
+
+    def test_add_image_invalid_opacity_type(self):
+        url = "https://i.imgur.com/06Q1fSz.png"
+        bounds = (-90, -180, 90, 180)
+        with self.assertRaises(TypeError):
+            self.map.add_image(url, bounds=bounds, opacity="high")
+
+    def test_add_image_opacity_out_of_range(self):
+        url = "https://i.imgur.com/06Q1fSz.png"
+        bounds = (-90, -180, 90, 180)
+        with self.assertRaises(TypeError):
+            self.map.add_image(url, bounds=bounds, opacity=1.5)
+
+    def test_add_image_missing_local_file(self):
+        path = Path("/nonexistent/image.png")
+        bounds = (-90, -180, 90, 180)
+        with self.assertRaises(FileNotFoundError):
+            self.map.add_image(path, bounds=bounds, opacity=0.5)
+
