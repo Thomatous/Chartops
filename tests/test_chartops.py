@@ -216,7 +216,6 @@ class TestChartops(unittest.TestCase):
             layer = self.map.layers[-1]
             self.assertIsInstance(layer, ImageOverlay)
 
-
     def test_add_image_invalid_bounds_type(self):
         url = "https://i.imgur.com/06Q1fSz.png"
         bounds = "not-a-tuple"

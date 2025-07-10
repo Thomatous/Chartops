@@ -144,7 +144,13 @@ class Map(iPyLeafletMap):
         except Exception as e:
             raise ValueError(f"Failed to add raster layer: {e}")
 
-    def add_image(self, url: Union[str, Path], bounds: Tuple[Tuple[float, float], Tuple[float, float]], opacity: float, **kwargs) -> None:
+    def add_image(
+        self,
+        url: Union[str, Path],
+        bounds: Tuple[Tuple[float, float], Tuple[float, float]],
+        opacity: float,
+        **kwargs,
+    ) -> None:
         """
         Add a static image overlay to the map.
 
@@ -165,23 +171,22 @@ class Map(iPyLeafletMap):
             raise FileNotFoundError(f"Image file not found: {url}")
 
         if (
-            not isinstance(bounds, tuple) or
-            len(bounds) != 2 or
-            not all(isinstance(pair, tuple) and len(pair) == 2 for pair in bounds) or
-            not all(isinstance(coord, (int, float)) for pair in bounds for coord in pair)
+            not isinstance(bounds, tuple)
+            or len(bounds) != 2
+            or not all(isinstance(pair, tuple) and len(pair) == 2 for pair in bounds)
+            or not all(
+                isinstance(coord, (int, float)) for pair in bounds for coord in pair
+            )
         ):
-            raise TypeError("bounds must be a tuple of two (lat, lon) tuples: ((south, west), (north, east))")
+            raise TypeError(
+                "bounds must be a tuple of two (lat, lon) tuples: ((south, west), (north, east))"
+            )
 
         if not isinstance(opacity, (int, float)) or not (0 <= opacity <= 1):
             raise TypeError("opacity must be a float between 0 and 1")
 
         try:
-            image = ImageOverlay(
-                url=str(url),
-                bounds=bounds,
-                opacity=opacity,
-                **kwargs
-            )
+            image = ImageOverlay(url=str(url), bounds=bounds, opacity=opacity, **kwargs)
             self.add(image)
         except Exception as e:
             raise ValueError(f"Failed to add image overlay: {e}")
