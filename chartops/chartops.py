@@ -2,7 +2,7 @@ import geopandas as gpd
 from typing import Union, Optional, Tuple
 from pathlib import Path
 from ipyleaflet import Map as iPyLeafletMap
-from ipyleaflet import LayersControl, basemap_to_tiles, GeoJSON, ImageOverlay
+from ipyleaflet import LayersControl, basemap_to_tiles, GeoJSON, ImageOverlay, WMSLayer
 from chartops import common
 
 
@@ -190,3 +190,54 @@ class Map(iPyLeafletMap):
             self.add(image)
         except Exception as e:
             raise ValueError(f"Failed to add image overlay: {e}")
+
+    def add_wms_layer(
+        self,
+        url: str,
+        layers: str,
+        name: str,
+        format: str,
+        transparent: bool,
+        **kwargs
+    ) -> None:
+        """
+        Add a WMS (Web Map Service) layer to the map.
+
+        Args:
+            url (str): Base URL of the WMS service.
+            layers (str): Comma-separated list of layer names to request from the service.
+            name (str): Name of the layer to show in the map.
+            format (str): Image format for the WMS tiles (e.g., 'image/png').
+            transparent (bool): Whether the WMS tiles should support transparency.
+            **kwargs (dict): Additional keyword arguments passed to the WMSLayer.
+
+        Returns:
+            None
+
+        Raises:
+            TypeError: If any of the required parameters are not of the expected type.
+            ValueError: If the WMS layer cannot be created or added.
+        """
+        if not isinstance(url, str):
+            raise TypeError(f"url must be a string, got {type(url)}")
+        if not isinstance(layers, str):
+            raise TypeError(f"layers must be a string, got {type(layers)}")
+        if not isinstance(name, str):
+            raise TypeError(f"name must be a string, got {type(name)}")
+        if not isinstance(format, str):
+            raise TypeError(f"format must be a string, got {type(format)}")
+        if not isinstance(transparent, bool):
+            raise TypeError(f"transparent must be a boolean, got {type(transparent)}")
+
+        try:
+            wms = WMSLayer(
+                url=url,
+                layers=layers,
+                format=format,
+                transparent=transparent,
+                **kwargs,
+            )
+            wms.name = name
+            self.add(wms)
+        except Exception as e:
+            raise ValueError(f"Failed to add WMS layer: {e}")
