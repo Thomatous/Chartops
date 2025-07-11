@@ -192,13 +192,7 @@ class Map(iPyLeafletMap):
             raise ValueError(f"Failed to add image overlay: {e}")
 
     def add_wms_layer(
-        self,
-        url: str,
-        layers: str,
-        name: str,
-        format: str,
-        transparent: bool,
-        **kwargs
+        self, url: str, layers: str, name: str, format: str, transparent: bool, **kwargs
     ) -> None:
         """
         Add a WMS (Web Map Service) layer to the map.

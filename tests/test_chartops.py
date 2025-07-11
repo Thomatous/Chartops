@@ -267,35 +267,57 @@ class TestChartops(unittest.TestCase):
     def test_add_wms_layer_invalid_url_type(self):
         with self.assertRaises(TypeError):
             self.map.add_wms_layer(
-                url=123, layers="layer", name="Layer", format="image/png", transparent=True
+                url=123,
+                layers="layer",
+                name="Layer",
+                format="image/png",
+                transparent=True,
             )
 
     def test_add_wms_layer_invalid_layers_type(self):
         with self.assertRaises(TypeError):
             self.map.add_wms_layer(
-                url="http://mesonet.agron.iastate.edu/cgi-bin/wms/nexrad/n0r.cgi", layers=123, name="Layer", format="image/png", transparent=True
+                url="http://mesonet.agron.iastate.edu/cgi-bin/wms/nexrad/n0r.cgi",
+                layers=123,
+                name="Layer",
+                format="image/png",
+                transparent=True,
             )
 
     def test_add_wms_layer_invalid_name_type(self):
         with self.assertRaises(TypeError):
             self.map.add_wms_layer(
-                url="http://mesonet.agron.iastate.edu/cgi-bin/wms/nexrad/n0r.cgi", layers="layer", name=123, format="image/png", transparent=True
+                url="http://mesonet.agron.iastate.edu/cgi-bin/wms/nexrad/n0r.cgi",
+                layers="layer",
+                name=123,
+                format="image/png",
+                transparent=True,
             )
 
     def test_add_wms_layer_invalid_format_type(self):
         with self.assertRaises(TypeError):
             self.map.add_wms_layer(
-                url="http://mesonet.agron.iastate.edu/cgi-bin/wms/nexrad/n0r.cgi", layers="layer", name="Layer", format=123, transparent=True
+                url="http://mesonet.agron.iastate.edu/cgi-bin/wms/nexrad/n0r.cgi",
+                layers="layer",
+                name="Layer",
+                format=123,
+                transparent=True,
             )
 
     def test_add_wms_layer_invalid_transparent_type(self):
         with self.assertRaises(TypeError):
             self.map.add_wms_layer(
-                url="http://mesonet.agron.iastate.edu/cgi-bin/wms/nexrad/n0r.cgi", layers="layer", name="Layer", format="image/png", transparent="yes"
+                url="http://mesonet.agron.iastate.edu/cgi-bin/wms/nexrad/n0r.cgi",
+                layers="layer",
+                name="Layer",
+                format="image/png",
+                transparent="yes",
             )
 
     def test_add_wms_layer_failure_simulation(self):
-        with patch("chartops.chartops.WMSLayer", side_effect=Exception("Failed to initialize")):
+        with patch(
+            "chartops.chartops.WMSLayer", side_effect=Exception("Failed to initialize")
+        ):
             with self.assertRaises(ValueError) as cm:
                 self.map.add_wms_layer(
                     url="http://mesonet.agron.iastate.edu/cgi-bin/wms/nexrad/n0r.cgi",
