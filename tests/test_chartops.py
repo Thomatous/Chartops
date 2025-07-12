@@ -11,7 +11,7 @@ import pandas as pd
 import geopandas as gpd
 from pathlib import Path
 from chartops import chartops
-from ipyleaflet import LayersControl, GeoJSON, ImageOverlay, WMSLayer
+from ipyleaflet import LayersControl, GeoJSON, ImageOverlay, WMSLayer, VideoOverlay
 from unittest.mock import patch
 
 
@@ -251,6 +251,60 @@ class TestChartops(unittest.TestCase):
         bounds = ((-90, -180), (90, 180))
         with self.assertRaises(FileNotFoundError):
             self.map.add_image(path, bounds=bounds, opacity=0.5)
+
+    def test_add_video_valid_remote_url(self):
+        url = "https://www.mapbox.com/bites/00188/patricia_nasa.webm"
+        bounds = ((-90, -180), (90, 180))
+        self.map.add_video(url, bounds=bounds, opacity=0.7)
+        layer = self.map.layers[-1]
+        self.assertIsInstance(layer, VideoOverlay)
+
+    def test_add_video_valid_local_file(self):
+        with tempfile.TemporaryDirectory() as tmpdir:
+            video_path = Path(tmpdir) / "test_video.mp4"
+            with open(video_path, "wb") as f:
+                f.write(b"\x00" * 1024)
+
+            bounds = ((-10, -10), (10, 10))
+            self.map.add_video(video_path, bounds=bounds, opacity=0.9)
+            layer = self.map.layers[-1]
+            self.assertIsInstance(layer, VideoOverlay)
+
+    def test_add_video_invalid_bounds_type(self):
+        url = "https://www.mapbox.com/bites/00188/patricia_nasa.webm"
+        bounds = "invalid_bounds"
+        with self.assertRaises(TypeError):
+            self.map.add_video(url, bounds=bounds, opacity=0.5)
+
+    def test_add_video_bounds_wrong_structure(self):
+        url = "https://www.mapbox.com/bites/00188/patricia_nasa.webm"
+        bounds = (-90, -180, 90, 180)  # Flat tuple instead of nested
+        with self.assertRaises(TypeError):
+            self.map.add_video(url, bounds=bounds, opacity=0.5)
+
+    def test_add_video_bounds_not_numeric(self):
+        url = "https://www.mapbox.com/bites/00188/patricia_nasa.webm"
+        bounds = (("south", "west"), ("north", "east"))
+        with self.assertRaises(TypeError):
+            self.map.add_video(url, bounds=bounds, opacity=0.5)
+
+    def test_add_video_invalid_opacity_type(self):
+        url = "https://www.mapbox.com/bites/00188/patricia_nasa.webm"
+        bounds = ((-90, -180), (90, 180))
+        with self.assertRaises(TypeError):
+            self.map.add_video(url, bounds=bounds, opacity="high")
+
+    def test_add_video_opacity_out_of_range(self):
+        url = "https://www.mapbox.com/bites/00188/patricia_nasa.webm"
+        bounds = ((-90, -180), (90, 180))
+        with self.assertRaises(TypeError):
+            self.map.add_video(url, bounds=bounds, opacity=1.5)
+
+    def test_add_video_missing_local_file(self):
+        path = Path("/nonexistent/video.mp4")
+        bounds = ((-90, -180), (90, 180))
+        with self.assertRaises(FileNotFoundError):
+            self.map.add_video(path, bounds=bounds, opacity=0.5)
 
     def test_add_wms_layer_valid(self):
         url = "http://mesonet.agron.iastate.edu/cgi-bin/wms/nexrad/n0r.cgi"
