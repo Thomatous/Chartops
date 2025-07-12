@@ -203,9 +203,9 @@ class Map(iPyLeafletMap):
 
         Args:
             url (str or Path): URL or path to the video to overlay.
-            bounds (tuple): A tuple of ((south, west), (north, east)) coordinates defining the bounding box of the image.
+            bounds (tuple): A tuple of ((south, west), (north, east)) coordinates defining the bounding box of the video.
             opacity (float): Opacity of the video overlay. Must be between 0 and 1.
-            **kwargs (dict): Additional keyword arguments passed to ImageOverlay.
+            **kwargs (dict): Additional keyword arguments passed to VideoOverlay.
 
         Returns:
             None
