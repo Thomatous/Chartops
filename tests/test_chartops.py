@@ -264,7 +264,7 @@ class TestChartops(unittest.TestCase):
             video_path = Path(tmpdir) / "test_video.mp4"
             with open(video_path, "wb") as f:
                 f.write(b"\x00" * 1024)
-            
+
             bounds = ((-10, -10), (10, 10))
             self.map.add_video(video_path, bounds=bounds, opacity=0.9)
             layer = self.map.layers[-1]

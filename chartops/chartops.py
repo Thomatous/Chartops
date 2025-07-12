@@ -2,7 +2,14 @@ import geopandas as gpd
 from typing import Union, Optional, Tuple
 from pathlib import Path
 from ipyleaflet import Map as iPyLeafletMap
-from ipyleaflet import LayersControl, basemap_to_tiles, GeoJSON, ImageOverlay, WMSLayer, VideoOverlay
+from ipyleaflet import (
+    LayersControl,
+    basemap_to_tiles,
+    GeoJSON,
+    ImageOverlay,
+    WMSLayer,
+    VideoOverlay,
+)
 from chartops import common
 
 
