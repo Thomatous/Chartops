@@ -2,7 +2,7 @@ import geopandas as gpd
 from typing import Union, Optional, Tuple
 from pathlib import Path
 from ipyleaflet import Map as iPyLeafletMap
-from ipyleaflet import LayersControl, basemap_to_tiles, GeoJSON, ImageOverlay, WMSLayer
+from ipyleaflet import LayersControl, basemap_to_tiles, GeoJSON, ImageOverlay, WMSLayer, VideoOverlay
 from chartops import common
 
 
@@ -190,6 +190,53 @@ class Map(iPyLeafletMap):
             self.add(image)
         except Exception as e:
             raise ValueError(f"Failed to add image overlay: {e}")
+
+    def add_video(
+        self,
+        url: Union[str, Path],
+        bounds: Tuple[Tuple[float, float], Tuple[float, float]],
+        opacity: float,
+        **kwargs,
+    ) -> None:
+        """
+        Add a video overlay to the map.
+
+        Args:
+            url (str or Path): URL or path to the video to overlay.
+            bounds (tuple): A tuple of ((south, west), (north, east)) coordinates defining the bounding box of the image.
+            opacity (float): Opacity of the video overlay. Must be between 0 and 1.
+            **kwargs (dict): Additional keyword arguments passed to ImageOverlay.
+
+        Returns:
+            None
+
+        Raises:
+            ValueError: If the bounds are not in correct format or opacity is invalid.
+            FileNotFoundError: If the local video path does not exist.
+        """
+        if isinstance(url, Path) and not url.exists():
+            raise FileNotFoundError(f"Video file not found: {url}")
+
+        if (
+            not isinstance(bounds, tuple)
+            or len(bounds) != 2
+            or not all(isinstance(pair, tuple) and len(pair) == 2 for pair in bounds)
+            or not all(
+                isinstance(coord, (int, float)) for pair in bounds for coord in pair
+            )
+        ):
+            raise TypeError(
+                "bounds must be a tuple of two (lat, lon) tuples: ((south, west), (north, east))"
+            )
+
+        if not isinstance(opacity, (int, float)) or not (0 <= opacity <= 1):
+            raise TypeError("opacity must be a float between 0 and 1")
+
+        try:
+            video = VideoOverlay(url=str(url), bounds=bounds, opacity=opacity, **kwargs)
+            self.add(video)
+        except Exception as e:
+            raise ValueError(f"Failed to add video overlay: {e}")
 
     def add_wms_layer(
         self, url: str, layers: str, name: str, format: str, transparent: bool, **kwargs
