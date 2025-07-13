@@ -20,7 +20,7 @@
       
       
       <link rel="icon" href="../assets/images/favicon.png">
-      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.6.14">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.6.15">
     
     
       
@@ -688,6 +688,15 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#chartops.common.resolve_colormap" class="md-nav__link">
+    <span class="md-ellipsis">
+      resolve_colormap()
+    </span>
+  </a>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -743,6 +752,15 @@
   <a href="#chartops.common.resolve_basemap_name" class="md-nav__link">
     <span class="md-ellipsis">
       resolve_basemap_name()
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#chartops.common.resolve_colormap" class="md-nav__link">
+    <span class="md-ellipsis">
+      resolve_colormap()
     </span>
   </a>
   
@@ -850,6 +868,8 @@
 <span class="sd">    Raises:</span>
 <span class="sd">        AttributeError: If the basemap name is not valid.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
+    <span class="kn">import</span><span class="w"> </span><span class="nn">xyzservices.providers</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">xyz</span>
+
     <span class="n">provider</span> <span class="o">=</span> <span class="n">xyz</span>
     <span class="k">for</span> <span class="n">part</span> <span class="ow">in</span> <span class="n">basemap_name</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;.&quot;</span><span class="p">):</span>
         <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">provider</span><span class="p">,</span> <span class="n">part</span><span class="p">):</span>
@@ -857,6 +877,125 @@
         <span class="k">else</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">AttributeError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Unsupported basemap: </span><span class="si">{</span><span class="n">basemap_name</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">provider</span>
+</code></pre></div>
+        </details>
+    </div>
+
+  </div>
+
+
+
+  <div class="doc doc-object doc-function">
+
+
+
+<h2 id="chartops.common.resolve_colormap" class="doc doc-heading">
+<code class="highlight language-python"><span class="n">resolve_colormap</span><span class="p">(</span><span class="n">colormap</span><span class="p">)</span></code>
+
+
+<a href="#chartops.common.resolve_colormap" class="headerlink" title="Permanent link">&para;</a></h2>
+
+    <div class="doc doc-contents ">
+
+      <p>Resolve a colormap input to a matplotlib colormap object.</p>
+
+<p><strong>Parameters:</strong></p>
+<table>
+  <thead>
+    <tr>
+      <th>Name</th>
+      <th>Type</th>
+      <th>Description</th>
+      <th>Default</th>
+    </tr>
+  </thead>
+  <tbody>
+      <tr>
+        <td><code>colormap</code></td>
+        <td><code>str or dict</code></td>
+        <td><p>The input colormap.
+- If dict: Creates and returns a LinearSegmentedColormap.
+- If str: Returns the corresponding built-in matplotlib colormap.
+- If None: Returns None.</p></td>
+        <td><em>required</em></td>
+      </tr>
+  </tbody>
+</table>
+<p><strong>Returns:</strong></p>
+<table>
+  <thead>
+    <tr>
+      <th>Type</th>
+      <th>Description</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code>matplotlib.colors.Colormap</code></td>
+      <td><p>A valid colormap object.</p></td>
+    </tr>
+  </tbody>
+</table>
+<p><strong>Exceptions:</strong></p>
+<table>
+  <thead>
+    <tr>
+      <th>Type</th>
+      <th>Description</th>
+    </tr>
+  </thead>
+  <tbody>
+      <tr>
+        <td><code>ValueError</code></td>
+        <td><p>If the colormap dictionary is invalid or the string is not a recognized colormap name.</p></td>
+      </tr>
+      <tr>
+        <td><code>TypeError</code></td>
+        <td><p>If the input type is not str or dict.</p></td>
+      </tr>
+  </tbody>
+</table>
+        <details class="quote">
+          <summary>Source code in <code>chartops/common.py</code></summary>
+          <div class="highlight"><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">resolve_colormap</span><span class="p">(</span><span class="n">colormap</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">dict</span><span class="p">]])</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Colormap</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Resolve a colormap input to a matplotlib colormap object.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        colormap (str or dict): The input colormap.</span>
+<span class="sd">            - If dict: Creates and returns a LinearSegmentedColormap.</span>
+<span class="sd">            - If str: Returns the corresponding built-in matplotlib colormap.</span>
+<span class="sd">            - If None: Returns None.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        matplotlib.colors.Colormap: A valid colormap object.</span>
+
+<span class="sd">    Raises:</span>
+<span class="sd">        ValueError: If the colormap dictionary is invalid or the string is not a recognized colormap name.</span>
+<span class="sd">        TypeError: If the input type is not str or dict.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">colormap</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">return</span> <span class="kc">None</span>
+
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">colormap</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">custom_colormap</span> <span class="o">=</span> <span class="n">LinearSegmentedColormap</span><span class="p">(</span><span class="s2">&quot;custom&quot;</span><span class="p">,</span> <span class="n">colormap</span><span class="p">)</span>
+            <span class="n">custom_colormap</span><span class="o">.</span><span class="n">_init</span><span class="p">()</span>  <span class="c1"># Forces colormap dict validation</span>
+            <span class="k">return</span> <span class="n">custom_colormap</span>
+        <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Invalid colormap dictionary format: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">colormap</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">colormap</span> <span class="ow">in</span> <span class="n">colormaps</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">colormaps</span><span class="p">[</span><span class="n">colormap</span><span class="p">]</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;Invalid colormap name &#39;</span><span class="si">{</span><span class="n">colormap</span><span class="si">}</span><span class="s2">&#39;. Must be one of: </span><span class="si">{</span><span class="nb">list</span><span class="p">(</span><span class="n">colormaps</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span>
+            <span class="p">)</span>
+
+    <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span>
+        <span class="sa">f</span><span class="s2">&quot;Invalid colormap type: expected str, dict, or Colormap, got </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">colormap</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span>
+    <span class="p">)</span>
 </code></pre></div>
         </details>
     </div>
@@ -967,7 +1106,7 @@
       <script id="__config" type="application/json">{"base": "..", "features": ["navigation.instant", "navigation.tracking", "navigation.top", "search.highlight", "search.share"], "search": "../assets/javascripts/workers/search.d50fe291.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
     
     
-      <script src="../assets/javascripts/bundle.13a4f30d.min.js"></script>
+      <script src="../assets/javascripts/bundle.56ea9cef.min.js"></script>
       
         <script src="../js/timeago.min.js"></script>
       
