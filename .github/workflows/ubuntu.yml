@@ -28,6 +28,9 @@ jobs:
               uses: actions/setup-python@v5
               with:
                   python-version: ${{ matrix.config.py }}
+            - name: Install build dependencies
+              run: |
+                  python -m pip install --upgrade pip setuptools wheel
             - name: Install GDAL
               run: |
                   python -m pip install --upgrade pip
