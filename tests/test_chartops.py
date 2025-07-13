@@ -5,12 +5,14 @@
 
 import unittest
 import tempfile
-from pathlib import Path
-
-from chartops import chartops
-from ipyleaflet import LayersControl, GeoJSON
+import numpy as np
+import matplotlib.pyplot as plt
 import pandas as pd
 import geopandas as gpd
+from pathlib import Path
+from chartops import chartops
+from ipyleaflet import LayersControl, GeoJSON, ImageOverlay, WMSLayer, VideoOverlay
+from unittest.mock import patch
 
 
 class TestChartops(unittest.TestCase):
@@ -154,3 +156,228 @@ class TestChartops(unittest.TestCase):
                 "https://github.com/jupyter-widgets/ipyleaflet/raw/master/examples/europe_110.geo.json",
                 **{"fillOpacity": 2},
             )
+
+    def test_add_raster_from_url(self):
+        url = (
+            "https://github.com/opengeos/datasets/releases/download/raster/dem_90m.tif"
+        )
+        self.map.add_raster(url, opacity=0.8)
+        layer = self.map.layers[-1]
+        self.assertEqual(layer.opacity, 0.8)
+
+    def test_add_raster_with_custom_name(self):
+        url = (
+            "https://github.com/opengeos/datasets/releases/download/raster/dem_90m.tif"
+        )
+        custom_name = "Elevation Model"
+        self.map.add_raster(url, opacity=1.0, name=custom_name)
+        layer = self.map.layers[-1]
+        self.assertEqual(layer.name, custom_name)
+
+    def test_add_raster_invalid_path(self):
+        path = Path("non_existent_file.tif")
+        with self.assertRaises(FileNotFoundError):
+            self.map.add_raster(path, opacity=0.9)
+
+    def test_add_raster_invalid_opacity_type(self):
+        url = (
+            "https://github.com/opengeos/datasets/releases/download/raster/dem_90m.tif"
+        )
+        with self.assertRaises(ValueError):
+            self.map.add_raster(url, opacity="high")
+
+    def test_add_raster_invalid_colormap(self):
+        url = (
+            "https://github.com/opengeos/datasets/releases/download/raster/dem_90m.tif"
+        )
+        with patch(
+            "chartops.common.resolve_colormap",
+            side_effect=ValueError("Invalid colormap"),
+        ):
+            with self.assertRaises(ValueError) as cm:
+                self.map.add_raster(url, opacity=0.7, colormap="invalid_colormap")
+            self.assertIn("Failed to resolve colormap", str(cm.exception))
+
+    def test_add_image_valid_remote_url(self):
+        url = "https://i.imgur.com/06Q1fSz.png"
+        bounds = ((-90, -180), (90, 180))
+        self.map.add_image(url, bounds=bounds, opacity=0.6)
+        layer = self.map.layers[-1]
+        self.assertIsInstance(layer, ImageOverlay)
+
+    def test_add_image_valid_local_file(self):
+        with tempfile.TemporaryDirectory() as tmpdir:
+            image_data = np.random.rand(50, 50)
+            image_path = Path(tmpdir) / "test.png"
+            plt.imsave(image_path, image_data)
+
+            bounds = ((-10, -10), (10, 10))
+            self.map.add_image(image_path, bounds=bounds, opacity=0.8)
+            layer = self.map.layers[-1]
+            self.assertIsInstance(layer, ImageOverlay)
+
+    def test_add_image_invalid_bounds_type(self):
+        url = "https://i.imgur.com/06Q1fSz.png"
+        bounds = "not-a-tuple"
+        with self.assertRaises(TypeError):
+            self.map.add_image(url, bounds=bounds, opacity=0.5)
+
+    def test_add_image_bounds_wrong_structure(self):
+        url = "https://i.imgur.com/06Q1fSz.png"
+        bounds = (-90, -180, 90, 180)
+        with self.assertRaises(TypeError):
+            self.map.add_image(url, bounds=bounds, opacity=0.5)
+
+    def test_add_image_bounds_not_numeric(self):
+        url = "https://i.imgur.com/06Q1fSz.png"
+        bounds = (("south", "west"), ("north", "east"))
+        with self.assertRaises(TypeError):
+            self.map.add_image(url, bounds=bounds, opacity=0.5)
+
+    def test_add_image_invalid_opacity_type(self):
+        url = "https://i.imgur.com/06Q1fSz.png"
+        bounds = ((-90, -180), (90, 180))
+        with self.assertRaises(TypeError):
+            self.map.add_image(url, bounds=bounds, opacity="high")
+
+    def test_add_image_opacity_out_of_range(self):
+        url = "https://i.imgur.com/06Q1fSz.png"
+        bounds = ((-90, -180), (90, 180))
+        with self.assertRaises(TypeError):
+            self.map.add_image(url, bounds=bounds, opacity=1.5)
+
+    def test_add_image_missing_local_file(self):
+        path = Path("/nonexistent/image.png")
+        bounds = ((-90, -180), (90, 180))
+        with self.assertRaises(FileNotFoundError):
+            self.map.add_image(path, bounds=bounds, opacity=0.5)
+
+    def test_add_video_valid_remote_url(self):
+        url = "https://www.mapbox.com/bites/00188/patricia_nasa.webm"
+        bounds = ((-90, -180), (90, 180))
+        self.map.add_video(url, bounds=bounds, opacity=0.7)
+        layer = self.map.layers[-1]
+        self.assertIsInstance(layer, VideoOverlay)
+
+    def test_add_video_valid_local_file(self):
+        with tempfile.TemporaryDirectory() as tmpdir:
+            video_path = Path(tmpdir) / "test_video.mp4"
+            with open(video_path, "wb") as f:
+                f.write(b"\x00" * 1024)
+
+            bounds = ((-10, -10), (10, 10))
+            self.map.add_video(video_path, bounds=bounds, opacity=0.9)
+            layer = self.map.layers[-1]
+            self.assertIsInstance(layer, VideoOverlay)
+
+    def test_add_video_invalid_bounds_type(self):
+        url = "https://www.mapbox.com/bites/00188/patricia_nasa.webm"
+        bounds = "invalid_bounds"
+        with self.assertRaises(TypeError):
+            self.map.add_video(url, bounds=bounds, opacity=0.5)
+
+    def test_add_video_bounds_wrong_structure(self):
+        url = "https://www.mapbox.com/bites/00188/patricia_nasa.webm"
+        bounds = (-90, -180, 90, 180)  # Flat tuple instead of nested
+        with self.assertRaises(TypeError):
+            self.map.add_video(url, bounds=bounds, opacity=0.5)
+
+    def test_add_video_bounds_not_numeric(self):
+        url = "https://www.mapbox.com/bites/00188/patricia_nasa.webm"
+        bounds = (("south", "west"), ("north", "east"))
+        with self.assertRaises(TypeError):
+            self.map.add_video(url, bounds=bounds, opacity=0.5)
+
+    def test_add_video_invalid_opacity_type(self):
+        url = "https://www.mapbox.com/bites/00188/patricia_nasa.webm"
+        bounds = ((-90, -180), (90, 180))
+        with self.assertRaises(TypeError):
+            self.map.add_video(url, bounds=bounds, opacity="high")
+
+    def test_add_video_opacity_out_of_range(self):
+        url = "https://www.mapbox.com/bites/00188/patricia_nasa.webm"
+        bounds = ((-90, -180), (90, 180))
+        with self.assertRaises(TypeError):
+            self.map.add_video(url, bounds=bounds, opacity=1.5)
+
+    def test_add_video_missing_local_file(self):
+        path = Path("/nonexistent/video.mp4")
+        bounds = ((-90, -180), (90, 180))
+        with self.assertRaises(FileNotFoundError):
+            self.map.add_video(path, bounds=bounds, opacity=0.5)
+
+    def test_add_wms_layer_valid(self):
+        url = "http://mesonet.agron.iastate.edu/cgi-bin/wms/nexrad/n0r.cgi"
+        layers = "nexrad-n0r-900913"
+        name = "Test"
+        format = "image/png"
+        transparent = False
+
+        self.map.add_wms_layer(url, layers, name, format, transparent)
+        wms_layer = self.map.layers[-1]
+        self.assertIsInstance(wms_layer, WMSLayer)
+        self.assertEqual(wms_layer.name, name)
+
+    def test_add_wms_layer_invalid_url_type(self):
+        with self.assertRaises(TypeError):
+            self.map.add_wms_layer(
+                url=123,
+                layers="layer",
+                name="Layer",
+                format="image/png",
+                transparent=True,
+            )
+
+    def test_add_wms_layer_invalid_layers_type(self):
+        with self.assertRaises(TypeError):
+            self.map.add_wms_layer(
+                url="http://mesonet.agron.iastate.edu/cgi-bin/wms/nexrad/n0r.cgi",
+                layers=123,
+                name="Layer",
+                format="image/png",
+                transparent=True,
+            )
+
+    def test_add_wms_layer_invalid_name_type(self):
+        with self.assertRaises(TypeError):
+            self.map.add_wms_layer(
+                url="http://mesonet.agron.iastate.edu/cgi-bin/wms/nexrad/n0r.cgi",
+                layers="layer",
+                name=123,
+                format="image/png",
+                transparent=True,
+            )
+
+    def test_add_wms_layer_invalid_format_type(self):
+        with self.assertRaises(TypeError):
+            self.map.add_wms_layer(
+                url="http://mesonet.agron.iastate.edu/cgi-bin/wms/nexrad/n0r.cgi",
+                layers="layer",
+                name="Layer",
+                format=123,
+                transparent=True,
+            )
+
+    def test_add_wms_layer_invalid_transparent_type(self):
+        with self.assertRaises(TypeError):
+            self.map.add_wms_layer(
+                url="http://mesonet.agron.iastate.edu/cgi-bin/wms/nexrad/n0r.cgi",
+                layers="layer",
+                name="Layer",
+                format="image/png",
+                transparent="yes",
+            )
+
+    def test_add_wms_layer_failure_simulation(self):
+        with patch(
+            "chartops.chartops.WMSLayer", side_effect=Exception("Failed to initialize")
+        ):
+            with self.assertRaises(ValueError) as cm:
+                self.map.add_wms_layer(
+                    url="http://mesonet.agron.iastate.edu/cgi-bin/wms/nexrad/n0r.cgi",
+                    layers="layer",
+                    name="Layer",
+                    format="image/png",
+                    transparent=True,
+                )
+            self.assertIn("Failed to add WMS layer", str(cm.exception))
