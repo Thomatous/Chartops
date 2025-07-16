@@ -4,3 +4,4 @@ ipyleaflet
 localtileserver
 matplotlib
 numpy
+ipywidgets
