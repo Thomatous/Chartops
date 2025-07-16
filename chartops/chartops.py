@@ -9,7 +9,9 @@ from ipyleaflet import (
     ImageOverlay,
     WMSLayer,
     VideoOverlay,
+    WidgetControl,
 )
+import ipywidgets as widgets
 from chartops import common
 
 
@@ -289,3 +291,13 @@ class Map(iPyLeafletMap):
             self.add(wms)
         except Exception as e:
             raise ValueError(f"Failed to add WMS layer: {e}")
+    
+    def add_basemap_gui(self, position="topright"):
+        default_basemap =  "OpenStreetMap.Mapnik"
+        dropdown = widgets.Dropdown(
+            options=common.get_all_basemap_names(),
+            value=default_basemap,
+            description="Basemap:"
+        )
+        dropdown_control = WidgetControl(widget=dropdown, position=position)
+        self.add(dropdown_control)
