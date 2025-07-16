@@ -1,4 +1,5 @@
-from typing import Union, Any, Optional
+import xyzservices.providers as xyz
+from typing import Union, Any, Optional, List
 from matplotlib.colors import Colormap, LinearSegmentedColormap
 from matplotlib import colormaps
 
@@ -16,8 +17,6 @@ def resolve_basemap_name(basemap_name: str) -> Any:
     Raises:
         AttributeError: If the basemap name is not valid.
     """
-    import xyzservices.providers as xyz
-
     provider = xyz
     for part in basemap_name.split("."):
         if hasattr(provider, part):
@@ -66,3 +65,15 @@ def resolve_colormap(colormap: Optional[Union[str, dict]]) -> Optional[Colormap]
     raise TypeError(
         f"Invalid colormap type: expected str, dict, or Colormap, got {type(colormap)}"
     )
+
+def get_all_basemap_names() -> List[str]:
+    provider_data = xyz
+    map_names = []
+
+    for provider, maps in provider_data.items():
+        if all(isinstance(v, dict) for v in maps.values()):
+            for submap in maps:
+                map_names.append(f"{provider}.{submap}")
+        else:
+            map_names.append(provider)
+    return map_names
