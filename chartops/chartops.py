@@ -1,4 +1,5 @@
 import geopandas as gpd
+import xyzservices.providers as xyz
 from typing import Union, Optional, Tuple
 from pathlib import Path
 from ipyleaflet import Map as iPyLeafletMap
@@ -27,7 +28,7 @@ class Map(iPyLeafletMap):
         Returns:
             None
         """
-        basemap = common.resolve_basemap_name(basemap_name)
+        basemap = xyz.query_name(basemap_name)
         basemap_tiles = basemap_to_tiles(basemap, **kwargs)
         basemap_tiles.base = True
         basemap_tiles.name = basemap_name
@@ -293,7 +294,8 @@ class Map(iPyLeafletMap):
             raise ValueError(f"Failed to add WMS layer: {e}")
     
     def add_basemap_gui(self, position="topright"):
-        default_basemap =  "OpenStreetMap.Mapnik"
+        import xyzservices.providers as xyz        
+        default_basemap =  xyz.OpenStreetMap.Mapnik
         dropdown = widgets.Dropdown(
             options=common.get_all_basemap_names(),
             value=default_basemap,

@@ -1,29 +1,8 @@
 import xyzservices.providers as xyz
-from typing import Union, Any, Optional, List
+from xyzservices import TileProvider
+from typing import Union, Any, Optional, List, Tuple
 from matplotlib.colors import Colormap, LinearSegmentedColormap
 from matplotlib import colormaps
-
-
-def resolve_basemap_name(basemap_name: str) -> Any:
-    """
-    Resolve a basemap name into an xyzservices object.
-
-    Args:
-    basemap_name (str): Dot-separated name of the basemap (e.g., 'Esri.WorldImagery').
-
-    Returns:
-        Any: An xyzservices object, compatible with both folium and ipyleaflet.
-
-    Raises:
-        AttributeError: If the basemap name is not valid.
-    """
-    provider = xyz
-    for part in basemap_name.split("."):
-        if hasattr(provider, part):
-            provider = getattr(provider, part)
-        else:
-            raise AttributeError(f"Unsupported basemap: {basemap_name}")
-    return provider
 
 
 def resolve_colormap(colormap: Optional[Union[str, dict]]) -> Optional[Colormap]:
@@ -66,14 +45,5 @@ def resolve_colormap(colormap: Optional[Union[str, dict]]) -> Optional[Colormap]
         f"Invalid colormap type: expected str, dict, or Colormap, got {type(colormap)}"
     )
 
-def get_all_basemap_names() -> List[str]:
-    provider_data = xyz
-    map_names = []
-
-    for provider, maps in provider_data.items():
-        if all(isinstance(v, dict) for v in maps.values()):
-            for submap in maps:
-                map_names.append(f"{provider}.{submap}")
-        else:
-            map_names.append(provider)
-    return map_names
+def get_all_basemaps() -> List[TileProvider]:
+    return xyz.flatten()
