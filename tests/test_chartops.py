@@ -38,7 +38,7 @@ class TestChartops(unittest.TestCase):
         self.assertEqual(len(self.map.layers), 3)
 
     def test_adding_an_invalid_basemap(self) -> None:
-        with self.assertRaises(AttributeError):
+        with self.assertRaises(ValueError):
             self.map.add_basemap("Invalid.BasemapName")
 
     def test_adding_layer_control(self) -> None:

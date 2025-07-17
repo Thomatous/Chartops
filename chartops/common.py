@@ -1,6 +1,4 @@
-import xyzservices.providers as xyz
-from xyzservices import TileProvider
-from typing import Union, Any, Optional, List, Tuple
+from typing import Union, Optional
 from matplotlib.colors import Colormap, LinearSegmentedColormap
 from matplotlib import colormaps
 
@@ -44,6 +42,3 @@ def resolve_colormap(colormap: Optional[Union[str, dict]]) -> Optional[Colormap]
     raise TypeError(
         f"Invalid colormap type: expected str, dict, or Colormap, got {type(colormap)}"
     )
-
-def get_all_basemaps() -> List[TileProvider]:
-    return xyz.flatten()
