@@ -381,3 +381,6 @@ class TestChartops(unittest.TestCase):
                     transparent=True,
                 )
             self.assertIn("Failed to add WMS layer", str(cm.exception))
+
+    def test_add_basemap_gui(self):
+        self.map.add_basemap_gui()

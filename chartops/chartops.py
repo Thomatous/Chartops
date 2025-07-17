@@ -294,10 +294,12 @@ class Map(iPyLeafletMap):
             raise ValueError(f"Failed to add WMS layer: {e}")
     
     def add_basemap_gui(self, position="topright"):
-        import xyzservices.providers as xyz        
+        basemaps = xyz.flatten()
+        basemaps_list = list(basemaps.items())         
+
         default_basemap =  xyz.OpenStreetMap.Mapnik
         dropdown = widgets.Dropdown(
-            options=common.get_all_basemap_names(),
+            options=basemaps_list,
             value=default_basemap,
             description="Basemap:"
         )
