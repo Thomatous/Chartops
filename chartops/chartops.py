@@ -2,7 +2,7 @@ import geopandas as gpd
 import xyzservices.providers as xyz
 from typing import Union, Optional, Tuple
 from pathlib import Path
-from ipyleaflet import Map as iPyLeafletMap
+from ipyleaflet import Map as iPyLeafletMap, TileLayer
 from ipyleaflet import (
     LayersControl,
     basemap_to_tiles,
@@ -14,6 +14,7 @@ from ipyleaflet import (
 )
 import ipywidgets as widgets
 from chartops import common
+
 
 
 class Map(iPyLeafletMap):
@@ -295,13 +296,40 @@ class Map(iPyLeafletMap):
     
     def add_basemap_gui(self, position="topright"):
         basemaps = xyz.flatten()
-        basemaps_list = list(basemaps.items())         
-
-        default_basemap =  xyz.OpenStreetMap.Mapnik
+        
+        basemaps_list = []
+        for name, provider in basemaps.items():
+            try:
+                provider.build_url()
+                tile = basemap_to_tiles(provider)
+                basemaps_list.append((name, tile))
+            except Exception:
+                continue
+    
+        current_layer = next((layer for layer in self.layers if getattr(layer, 'base', False)), None)
+        current_tile = None
+        for name, tile in basemaps_list:
+            if isinstance(current_layer, TileLayer) and tile.url == current_layer.url:
+                current_tile = tile
+                break
+      
         dropdown = widgets.Dropdown(
             options=basemaps_list,
-            value=default_basemap,
+            value=current_tile,
             description="Basemap:"
         )
-        dropdown_control = WidgetControl(widget=dropdown, position=position)
-        self.add(dropdown_control)
+
+        def on_dropdown_change(change):
+            nonlocal current_layer
+            if change["new"]:
+                new_tile = change["new"]
+                new_tile.base = True
+                if current_layer in self.layers:
+                    self.substitute(current_layer, new_tile)
+                else:
+                    self.add(new_tile)
+                current_layer = new_tile
+
+        dropdown.observe(on_dropdown_change, names="value")
+        self.add(WidgetControl(widget=dropdown, position=position))
+
