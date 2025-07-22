@@ -151,7 +151,7 @@ class TestChartops(unittest.TestCase):
             )
 
     def test_adding_a_vector_layer_with_invalid_fillOpacity(self) -> None:
-        with self.assertRaises(ValueError):
+        with self.assertRaises(TypeError):
             self.map.add_vector(
                 "https://github.com/jupyter-widgets/ipyleaflet/raw/master/examples/europe_110.geo.json",
                 **{"fillOpacity": 2},
@@ -183,7 +183,7 @@ class TestChartops(unittest.TestCase):
         url = (
             "https://github.com/opengeos/datasets/releases/download/raster/dem_90m.tif"
         )
-        with self.assertRaises(ValueError):
+        with self.assertRaises(TypeError):
             self.map.add_raster(url, opacity="high")
 
     def test_add_raster_invalid_colormap(self):

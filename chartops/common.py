@@ -1,7 +1,7 @@
-from typing import Union, Optional
+import xyzservices.providers as xyz
+from typing import Union, Optional, List
 from matplotlib.colors import Colormap, LinearSegmentedColormap
 from matplotlib import colormaps
-
 
 def resolve_colormap(colormap: Optional[Union[str, dict]]) -> Optional[Colormap]:
     """
@@ -42,3 +42,16 @@ def resolve_colormap(colormap: Optional[Union[str, dict]]) -> Optional[Colormap]
     raise TypeError(
         f"Invalid colormap type: expected str, dict, or Colormap, got {type(colormap)}"
     )
+
+def get_free_basemap_names() -> List[str]:
+    basemaps = xyz.flatten()
+    valid_names = []
+
+    for name, provider in basemaps.items():
+        try:
+            provider.build_url()  # Validates the tile source
+            valid_names.append(name)
+        except Exception:
+            continue
+
+    return valid_names
