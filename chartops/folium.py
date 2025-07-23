@@ -1,6 +1,6 @@
 import folium
+import xyzservices.providers as xyz
 from typing import Union
-from chartops import common
 from pathlib import Path
 import geopandas as gpd
 
@@ -17,7 +17,7 @@ class Map(folium.Map):
         Returns:
             None
         """
-        basemap = common.resolve_basemap_name(basemap_name)
+        basemap = xyz.query_name(basemap_name)
         folium.TileLayer(
             tiles=basemap.build_url(),
             attr=basemap.attribution,

@@ -1,19 +1,63 @@
-import geopandas as gpd
-from typing import Union, Optional, Tuple
 from pathlib import Path
-from ipyleaflet import Map as iPyLeafletMap
+from typing import List, Optional, Tuple, Union
+
+import geopandas as gpd
+import ipywidgets as widgets
+import xyzservices.providers as xyz
 from ipyleaflet import (
-    LayersControl,
-    basemap_to_tiles,
+    Layer,
     GeoJSON,
     ImageOverlay,
-    WMSLayer,
+    LayersControl,
+    Map as iPyLeafletMap,
+    TileLayer,
     VideoOverlay,
+    WidgetControl,
+    WMSLayer,
+    basemap_to_tiles,
 )
 from chartops import common
 
 
 class Map(iPyLeafletMap):
+    def _get_basemap_layers(self) -> List[Layer]:
+        return [layer for layer in self.layers if layer.base]
+
+    def _get_latest_basemap_layer(self) -> Layer:
+        return self._get_basemap_layers()[-1]
+
+    def _create_basemap_tile_layer(self, name: str) -> TileLayer:
+        tile = basemap_to_tiles(xyz.query_name(name))
+        tile.base = True
+        tile.name = name
+        return tile
+
+    def _validate_opacity(self, opacity: float) -> None:
+        if not isinstance(opacity, (int, float)) or not (0 <= opacity <= 1):
+            raise TypeError("opacity must be a float between 0 and 1")
+
+    def _validate_bounds(
+        self, bounds: Tuple[Tuple[float, float], Tuple[float, float]]
+    ) -> None:
+        if (
+            not isinstance(bounds, tuple)
+            or len(bounds) != 2
+            or not all(isinstance(pair, tuple) and len(pair) == 2 for pair in bounds)
+            or not all(
+                isinstance(coord, (int, float)) for pair in bounds for coord in pair
+            )
+        ):
+            raise TypeError(
+                "bounds must be a tuple of two (lat, lon) tuples: ((south, west), (north, east))"
+            )
+
+    def _validate_position(self, position: str) -> None:
+        valid_positions = ["topright", "topleft", "bottomright", "bottomleft"]
+        if position not in valid_positions:
+            raise ValueError(
+                f"Invalid position '{position}'. Valid positions are: {valid_positions}"
+            )
+
     def add_basemap(self, basemap_name: str, **kwargs) -> None:
         """
         Add a basemap to the ipyleaflet map.
@@ -25,10 +69,7 @@ class Map(iPyLeafletMap):
         Returns:
             None
         """
-        basemap = common.resolve_basemap_name(basemap_name)
-        basemap_tiles = basemap_to_tiles(basemap, **kwargs)
-        basemap_tiles.base = True
-        basemap_tiles.name = basemap_name
+        basemap_tiles = self._create_basemap_tile_layer(basemap_name)
         self.add(basemap_tiles)
 
     def add_layer_control(self, position: str = "topright") -> None:
@@ -44,11 +85,7 @@ class Map(iPyLeafletMap):
         Raises:
             ValueError: If the position is not valid.
         """
-        valid_positions = ["topright", "topleft", "bottomright", "bottomleft"]
-        if position not in valid_positions:
-            raise ValueError(
-                f"Invalid position '{position}'. Valid positions are: {valid_positions}"
-            )
+        self._validate_position(position)
         self.add(LayersControl(position=position))
 
     def add_vector(self, filepath: Union[Path, str], name: str = "", **kwargs) -> None:
@@ -82,8 +119,7 @@ class Map(iPyLeafletMap):
             raise ValueError(f"weight must be an integer, got {type(weight)}")
 
         fillOpacity = kwargs.get("fillOpacity", 0.1)
-        if not isinstance(fillOpacity, (int, float)) or not (0 <= fillOpacity <= 1):
-            raise ValueError("fillOpacity must be a float between 0 and 1")
+        self._validate_opacity(fillOpacity)
 
         try:
             gdf = gpd.read_file(filepath)
@@ -127,8 +163,7 @@ class Map(iPyLeafletMap):
         if isinstance(url, Path) and not url.exists():
             raise FileNotFoundError(f"Raster file not found: {url}")
 
-        if not isinstance(opacity, (int, float)) or not (0 <= opacity <= 1):
-            raise ValueError("opacity must be a float between 0 and 1")
+        self._validate_opacity(opacity)
 
         try:
             colormap_arg = common.resolve_colormap(colormap)
@@ -137,10 +172,6 @@ class Map(iPyLeafletMap):
 
         try:
             client = TileClient(str(url))
-        except Exception as e:
-            raise ValueError(f"Failed to create TileClient from {url}: {e}")
-
-        try:
             self.center = client.center()
             self.zoom = client.default_zoom
             tile_layer = get_leaflet_tile_layer(
@@ -177,20 +208,8 @@ class Map(iPyLeafletMap):
         if isinstance(url, Path) and not url.exists():
             raise FileNotFoundError(f"Image file not found: {url}")
 
-        if (
-            not isinstance(bounds, tuple)
-            or len(bounds) != 2
-            or not all(isinstance(pair, tuple) and len(pair) == 2 for pair in bounds)
-            or not all(
-                isinstance(coord, (int, float)) for pair in bounds for coord in pair
-            )
-        ):
-            raise TypeError(
-                "bounds must be a tuple of two (lat, lon) tuples: ((south, west), (north, east))"
-            )
-
-        if not isinstance(opacity, (int, float)) or not (0 <= opacity <= 1):
-            raise TypeError("opacity must be a float between 0 and 1")
+        self._validate_bounds(bounds)
+        self._validate_opacity(opacity)
 
         try:
             image = ImageOverlay(url=str(url), bounds=bounds, opacity=opacity, **kwargs)
@@ -224,20 +243,8 @@ class Map(iPyLeafletMap):
         if isinstance(url, Path) and not url.exists():
             raise FileNotFoundError(f"Video file not found: {url}")
 
-        if (
-            not isinstance(bounds, tuple)
-            or len(bounds) != 2
-            or not all(isinstance(pair, tuple) and len(pair) == 2 for pair in bounds)
-            or not all(
-                isinstance(coord, (int, float)) for pair in bounds for coord in pair
-            )
-        ):
-            raise TypeError(
-                "bounds must be a tuple of two (lat, lon) tuples: ((south, west), (north, east))"
-            )
-
-        if not isinstance(opacity, (int, float)) or not (0 <= opacity <= 1):
-            raise TypeError("opacity must be a float between 0 and 1")
+        self._validate_bounds(bounds)
+        self._validate_opacity(opacity)
 
         try:
             video = VideoOverlay(url=str(url), bounds=bounds, opacity=opacity, **kwargs)
@@ -289,3 +296,71 @@ class Map(iPyLeafletMap):
             self.add(wms)
         except Exception as e:
             raise ValueError(f"Failed to add WMS layer: {e}")
+
+    def add_basemap_gui(self, position="topright") -> None:
+        """
+        Add a toggleable dropdown GUI to select and switch basemaps on the map.
+
+        A small toggle button is initially displayed at the given position.
+        When clicked, it reveals a dropdown menu listing available free basemaps.
+        The user can select a different basemap, which replaces the latest one.
+
+        Args:
+            position (str, optional): Position of the widget control on the map.
+                Must be one of "topright", "topleft", "bottomright", or "bottomleft".
+                Default is "topright".
+
+        Returns:
+            None
+
+        Raises:
+            ValueError: If the provided position is not valid.
+        """
+        self._validate_position(position)
+
+        basemap_names = common.get_free_basemap_names()
+        current = self._get_latest_basemap_layer().name
+
+        dropdown = widgets.Dropdown(
+            options=basemap_names,
+            value=current,
+            description="Basemap:",
+            layout=widgets.Layout(height="42px", width="auto"),
+        )
+
+        name_to_tile = {
+            name: self._create_basemap_tile_layer(name) for name in basemap_names
+        }
+
+        def on_dropdown_change(change):
+            new = change["new"]
+            if new != self._get_latest_basemap_layer().name:
+                self.substitute(self._get_latest_basemap_layer(), name_to_tile[new])
+
+        dropdown.observe(on_dropdown_change, names="value")
+
+        toggle = widgets.ToggleButton(
+            value=False,
+            tooltip="Show/hide basemap GUI",
+            icon="map",
+            layout=widgets.Layout(width="42px", height="42px"),
+        )
+        btn_control = WidgetControl(widget=toggle, position=position)
+
+        dropdown_box = widgets.HBox([dropdown, toggle])
+        gui_control = WidgetControl(widget=dropdown_box, position=position)
+
+        def on_toggle(change):
+            if change["new"]:
+                self.remove(btn_control)
+                self.add(gui_control)
+            else:
+                try:
+                    self.remove(gui_control)
+                except ValueError:
+                    pass
+                self.add(btn_control)
+
+        toggle.observe(on_toggle, names="value")
+
+        self.add(btn_control)

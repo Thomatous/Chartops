@@ -35,7 +35,7 @@ class TestChartopsFolium(unittest.TestCase):
         self.assertGreaterEqual(len(tile_layers), 2)
 
     def test_adding_an_invalid_basemap(self):
-        with self.assertRaises(AttributeError):
+        with self.assertRaises(ValueError):
             self.map.add_basemap("Invalid.BasemapName")
 
     def test_adding_layer_control(self):
