@@ -11,7 +11,14 @@ import pandas as pd
 import geopandas as gpd
 from pathlib import Path
 from chartops import chartops
-from ipyleaflet import LayersControl, GeoJSON, ImageOverlay, WMSLayer, VideoOverlay
+from ipyleaflet import (
+    LayersControl,
+    GeoJSON,
+    ImageOverlay,
+    WMSLayer,
+    VideoOverlay,
+    WidgetControl,
+)
 from unittest.mock import patch
 
 
@@ -38,7 +45,7 @@ class TestChartops(unittest.TestCase):
         self.assertEqual(len(self.map.layers), 3)
 
     def test_adding_an_invalid_basemap(self) -> None:
-        with self.assertRaises(AttributeError):
+        with self.assertRaises(ValueError):
             self.map.add_basemap("Invalid.BasemapName")
 
     def test_adding_layer_control(self) -> None:
@@ -59,11 +66,12 @@ class TestChartops(unittest.TestCase):
     def test_adding_layer_control_with_all_positions(self) -> None:
         positions = ["topright", "topleft", "bottomright", "bottomleft"]
         for position in positions:
-            map_instance = chartops.Map()
-            map_instance.add_layer_control(position)
-            control = map_instance.controls[-1]
-            self.assertIsInstance(control, LayersControl)
-            self.assertEqual(getattr(control, "position"), position)
+            with self.subTest(position=position):
+                map_instance = chartops.Map()
+                map_instance.add_layer_control(position)
+                control = map_instance.controls[-1]
+                self.assertIsInstance(control, LayersControl)
+                self.assertEqual(getattr(control, "position"), position)
 
     def test_adding_a_vector_layer_from_a_url(self) -> None:
         self.map.add_vector(
@@ -151,7 +159,7 @@ class TestChartops(unittest.TestCase):
             )
 
     def test_adding_a_vector_layer_with_invalid_fillOpacity(self) -> None:
-        with self.assertRaises(ValueError):
+        with self.assertRaises(TypeError):
             self.map.add_vector(
                 "https://github.com/jupyter-widgets/ipyleaflet/raw/master/examples/europe_110.geo.json",
                 **{"fillOpacity": 2},
@@ -183,7 +191,7 @@ class TestChartops(unittest.TestCase):
         url = (
             "https://github.com/opengeos/datasets/releases/download/raster/dem_90m.tif"
         )
-        with self.assertRaises(ValueError):
+        with self.assertRaises(TypeError):
             self.map.add_raster(url, opacity="high")
 
     def test_add_raster_invalid_colormap(self):
@@ -381,3 +389,22 @@ class TestChartops(unittest.TestCase):
                     transparent=True,
                 )
             self.assertIn("Failed to add WMS layer", str(cm.exception))
+
+    def test_get_basemap_layers_and_latest(self):
+        basemap_layers = self.map._get_basemap_layers()
+        self.assertEqual(len(basemap_layers), 1)
+        self.assertEqual(basemap_layers[0].name, "OpenStreetMap.Mapnik")
+
+        with self.subTest("Adding a single basemap"):
+            self.map.add_basemap("Esri.WorldImagery")
+            basemap_layers = self.map._get_basemap_layers()
+            self.assertEqual(len(basemap_layers), 2)
+            self.assertEqual(
+                self.map._get_latest_basemap_layer().name, "Esri.WorldImagery"
+            )
+
+        with self.subTest("Adding multiple basemaps"):
+            self.map.add_basemap("OpenTopoMap")
+            basemap_layers = self.map._get_basemap_layers()
+            self.assertEqual(len(basemap_layers), 3)
+            self.assertEqual(self.map._get_latest_basemap_layer().name, "OpenTopoMap")
