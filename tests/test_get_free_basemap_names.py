@@ -10,7 +10,7 @@ class TestGetFreeBasemapNames(unittest.TestCase):
         self.assertIsInstance(names, list)
         self.assertTrue(
             all(isinstance(name, str) for name in names),
-            "Not all basemap names are strings"
+            "Not all basemap names are strings",
         )
 
     def test_non_empty_result(self):
@@ -23,6 +23,5 @@ class TestGetFreeBasemapNames(unittest.TestCase):
         found = expected.intersection(actual)
 
         self.assertTrue(
-            found,
-            f"Expected at least one of {expected} in the returned basemap names"
+            found, f"Expected at least one of {expected} in the returned basemap names"
         )

@@ -11,7 +11,14 @@ import pandas as pd
 import geopandas as gpd
 from pathlib import Path
 from chartops import chartops
-from ipyleaflet import LayersControl, GeoJSON, ImageOverlay, WMSLayer, VideoOverlay, WidgetControl
+from ipyleaflet import (
+    LayersControl,
+    GeoJSON,
+    ImageOverlay,
+    WMSLayer,
+    VideoOverlay,
+    WidgetControl,
+)
 from unittest.mock import patch
 
 
@@ -392,7 +399,9 @@ class TestChartops(unittest.TestCase):
             self.map.add_basemap("Esri.WorldImagery")
             basemap_layers = self.map._get_basemap_layers()
             self.assertEqual(len(basemap_layers), 2)
-            self.assertEqual(self.map._get_latest_basemap_layer().name, "Esri.WorldImagery")
+            self.assertEqual(
+                self.map._get_latest_basemap_layer().name, "Esri.WorldImagery"
+            )
 
         with self.subTest("Adding multiple basemaps"):
             self.map.add_basemap("OpenTopoMap")
