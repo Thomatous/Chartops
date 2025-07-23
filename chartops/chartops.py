@@ -36,12 +36,16 @@ class Map(iPyLeafletMap):
         if not isinstance(opacity, (int, float)) or not (0 <= opacity <= 1):
             raise TypeError("opacity must be a float between 0 and 1")
 
-    def _validate_bounds(self, bounds: Tuple[Tuple[float, float], Tuple[float, float]]) -> None:
+    def _validate_bounds(
+        self, bounds: Tuple[Tuple[float, float], Tuple[float, float]]
+    ) -> None:
         if (
             not isinstance(bounds, tuple)
             or len(bounds) != 2
             or not all(isinstance(pair, tuple) and len(pair) == 2 for pair in bounds)
-            or not all(isinstance(coord, (int, float)) for pair in bounds for coord in pair)
+            or not all(
+                isinstance(coord, (int, float)) for pair in bounds for coord in pair
+            )
         ):
             raise TypeError(
                 "bounds must be a tuple of two (lat, lon) tuples: ((south, west), (north, east))"
@@ -293,7 +297,6 @@ class Map(iPyLeafletMap):
         except Exception as e:
             raise ValueError(f"Failed to add WMS layer: {e}")
 
-
     def add_basemap_gui(self, position="topright") -> None:
         """
         Add a toggleable dropdown GUI to select and switch basemaps on the map.
@@ -322,7 +325,7 @@ class Map(iPyLeafletMap):
             options=basemap_names,
             value=current,
             description="Basemap:",
-            layout=widgets.Layout(height="42px", width="auto")
+            layout=widgets.Layout(height="42px", width="auto"),
         )
 
         name_to_tile = {
@@ -332,17 +335,15 @@ class Map(iPyLeafletMap):
         def on_dropdown_change(change):
             new = change["new"]
             if new != self._get_latest_basemap_layer().name:
-                self.substitute(
-                    self._get_latest_basemap_layer(),
-                    name_to_tile[new]
-                )
+                self.substitute(self._get_latest_basemap_layer(), name_to_tile[new])
+
         dropdown.observe(on_dropdown_change, names="value")
 
         toggle = widgets.ToggleButton(
             value=False,
             tooltip="Show/hide basemap GUI",
             icon="map",
-            layout=widgets.Layout(width="42px", height="42px")
+            layout=widgets.Layout(width="42px", height="42px"),
         )
         btn_control = WidgetControl(widget=toggle, position=position)
 

@@ -3,6 +3,7 @@ from typing import Union, Optional, List
 from matplotlib.colors import Colormap, LinearSegmentedColormap
 from matplotlib import colormaps
 
+
 def resolve_colormap(colormap: Optional[Union[str, dict]]) -> Optional[Colormap]:
     """
     Resolve a colormap input to a matplotlib colormap object.
@@ -42,6 +43,7 @@ def resolve_colormap(colormap: Optional[Union[str, dict]]) -> Optional[Colormap]
     raise TypeError(
         f"Invalid colormap type: expected str, dict, or Colormap, got {type(colormap)}"
     )
+
 
 def get_free_basemap_names() -> List[str]:
     basemaps = xyz.flatten()
