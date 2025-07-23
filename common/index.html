@@ -680,15 +680,6 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#chartops.common.resolve_basemap_name" class="md-nav__link">
-    <span class="md-ellipsis">
-      resolve_basemap_name()
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
   <a href="#chartops.common.resolve_colormap" class="md-nav__link">
     <span class="md-ellipsis">
       resolve_colormap()
@@ -749,15 +740,6 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#chartops.common.resolve_basemap_name" class="md-nav__link">
-    <span class="md-ellipsis">
-      resolve_basemap_name()
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
   <a href="#chartops.common.resolve_colormap" class="md-nav__link">
     <span class="md-ellipsis">
       resolve_colormap()
@@ -806,82 +788,6 @@
 
 
 
-
-
-  <div class="doc doc-object doc-function">
-
-
-
-<h2 id="chartops.common.resolve_basemap_name" class="doc doc-heading">
-<code class="highlight language-python"><span class="n">resolve_basemap_name</span><span class="p">(</span><span class="n">basemap_name</span><span class="p">)</span></code>
-
-
-<a href="#chartops.common.resolve_basemap_name" class="headerlink" title="Permanent link">&para;</a></h2>
-
-    <div class="doc doc-contents ">
-
-      <p>Resolve a basemap name into an xyzservices object.</p>
-      <p>basemap_name (str): Dot-separated name of the basemap (e.g., 'Esri.WorldImagery').</p>
-
-<p><strong>Returns:</strong></p>
-<table>
-  <thead>
-    <tr>
-      <th>Type</th>
-      <th>Description</th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr>
-      <td><code>Any</code></td>
-      <td><p>An xyzservices object, compatible with both folium and ipyleaflet.</p></td>
-    </tr>
-  </tbody>
-</table>
-<p><strong>Exceptions:</strong></p>
-<table>
-  <thead>
-    <tr>
-      <th>Type</th>
-      <th>Description</th>
-    </tr>
-  </thead>
-  <tbody>
-      <tr>
-        <td><code>AttributeError</code></td>
-        <td><p>If the basemap name is not valid.</p></td>
-      </tr>
-  </tbody>
-</table>
-        <details class="quote">
-          <summary>Source code in <code>chartops/common.py</code></summary>
-          <div class="highlight"><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">resolve_basemap_name</span><span class="p">(</span><span class="n">basemap_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Any</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Resolve a basemap name into an xyzservices object.</span>
-
-<span class="sd">    Args:</span>
-<span class="sd">    basemap_name (str): Dot-separated name of the basemap (e.g., &#39;Esri.WorldImagery&#39;).</span>
-
-<span class="sd">    Returns:</span>
-<span class="sd">        Any: An xyzservices object, compatible with both folium and ipyleaflet.</span>
-
-<span class="sd">    Raises:</span>
-<span class="sd">        AttributeError: If the basemap name is not valid.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="kn">import</span><span class="w"> </span><span class="nn">xyzservices.providers</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">xyz</span>
-
-    <span class="n">provider</span> <span class="o">=</span> <span class="n">xyz</span>
-    <span class="k">for</span> <span class="n">part</span> <span class="ow">in</span> <span class="n">basemap_name</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;.&quot;</span><span class="p">):</span>
-        <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">provider</span><span class="p">,</span> <span class="n">part</span><span class="p">):</span>
-            <span class="n">provider</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">provider</span><span class="p">,</span> <span class="n">part</span><span class="p">)</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="ne">AttributeError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Unsupported basemap: </span><span class="si">{</span><span class="n">basemap_name</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
-    <span class="k">return</span> <span class="n">provider</span>
-</code></pre></div>
-        </details>
-    </div>
-
-  </div>
 
 
 

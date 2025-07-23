@@ -887,7 +887,7 @@ Map            (<span title="folium.folium.Map">Map</span>)
 <span class="sd">        Returns:</span>
 <span class="sd">            None</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">basemap</span> <span class="o">=</span> <span class="n">common</span><span class="o">.</span><span class="n">resolve_basemap_name</span><span class="p">(</span><span class="n">basemap_name</span><span class="p">)</span>
+        <span class="n">basemap</span> <span class="o">=</span> <span class="n">xyz</span><span class="o">.</span><span class="n">query_name</span><span class="p">(</span><span class="n">basemap_name</span><span class="p">)</span>
         <span class="n">folium</span><span class="o">.</span><span class="n">TileLayer</span><span class="p">(</span>
             <span class="n">tiles</span><span class="o">=</span><span class="n">basemap</span><span class="o">.</span><span class="n">build_url</span><span class="p">(),</span>
             <span class="n">attr</span><span class="o">=</span><span class="n">basemap</span><span class="o">.</span><span class="n">attribution</span><span class="p">,</span>
@@ -1041,7 +1041,7 @@ Map            (<span title="folium.folium.Map">Map</span>)
 <span class="sd">    Returns:</span>
 <span class="sd">        None</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">basemap</span> <span class="o">=</span> <span class="n">common</span><span class="o">.</span><span class="n">resolve_basemap_name</span><span class="p">(</span><span class="n">basemap_name</span><span class="p">)</span>
+    <span class="n">basemap</span> <span class="o">=</span> <span class="n">xyz</span><span class="o">.</span><span class="n">query_name</span><span class="p">(</span><span class="n">basemap_name</span><span class="p">)</span>
     <span class="n">folium</span><span class="o">.</span><span class="n">TileLayer</span><span class="p">(</span>
         <span class="n">tiles</span><span class="o">=</span><span class="n">basemap</span><span class="o">.</span><span class="n">build_url</span><span class="p">(),</span>
         <span class="n">attr</span><span class="o">=</span><span class="n">basemap</span><span class="o">.</span><span class="n">attribution</span><span class="p">,</span>
