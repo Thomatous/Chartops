@@ -293,63 +293,73 @@ class Map(iPyLeafletMap):
         except Exception as e:
             raise ValueError(f"Failed to add WMS layer: {e}")
 
-    def add_basemap_gui(self, position="topright"):
+
+    def add_basemap_gui(self, position="topright") -> None:
         """
-        Add a GUI widget (dropdown) to switch between basemaps.
+        Add a toggleable dropdown GUI to select and switch basemaps on the map.
+
+        A small toggle button is initially displayed at the given position.
+        When clicked, it reveals a dropdown menu listing available free basemaps.
+        The user can select a different basemap, which replaces the latest one.
 
         Args:
-            position (str): Position on the map to place the widget.
-                            Valid values: "topright", "topleft", "bottomright", "bottomleft".
+            position (str, optional): Position of the widget control on the map.
+                Must be one of "topright", "topleft", "bottomright", or "bottomleft".
+                Default is "topright".
 
         Returns:
             None
 
         Raises:
-            RuntimeError: If no basemap names are available.
-            ValueError: If the current map has no base layer or the position is invalid.
+            ValueError: If the provided position is not valid.
         """
         self._validate_position(position)
 
-        try:
-            basemap_names = common.get_free_basemap_names()
-            if not basemap_names:
-                raise RuntimeError("No basemaps available")
-        except Exception as e:
-            raise RuntimeError(f"Failed to retrieve basemap names: {e}")
+        basemap_names = common.get_free_basemap_names()
+        current = self._get_latest_basemap_layer().name
 
-        try:
-            current_layer = self._get_latest_basemap_layer()
-            current_name = current_layer.name
-        except Exception as e:
-            raise ValueError(f"Failed to retrieve current basemap layer: {e}")
+        dropdown = widgets.Dropdown(
+            options=basemap_names,
+            value=current,
+            description="Basemap:",
+            layout=widgets.Layout(height="42px", width="auto")
+        )
 
-        try:
-            name_to_tile = {
-                name: self._create_basemap_tile_layer(name) for name in basemap_names
-            }
-        except Exception as e:
-            raise ValueError(f"Failed to create basemap tile layers: {e}")
+        name_to_tile = {
+            name: self._create_basemap_tile_layer(name) for name in basemap_names
+        }
 
-        try:
-            dropdown = widgets.Dropdown(
-                options=basemap_names,
-                value=current_name,
-                description="Basemap:",
-            )
+        def on_dropdown_change(change):
+            new = change["new"]
+            if new != self._get_latest_basemap_layer().name:
+                self.substitute(
+                    self._get_latest_basemap_layer(),
+                    name_to_tile[new]
+                )
+        dropdown.observe(on_dropdown_change, names="value")
 
-            def on_change(change):
-                nonlocal current_layer
-                new_name = change["new"]
-                if new_name == current_layer.name:
-                    return
+        toggle = widgets.ToggleButton(
+            value=False,
+            tooltip="Show/hide basemap GUI",
+            icon="map",
+            layout=widgets.Layout(width="42px", height="42px")
+        )
+        btn_control = WidgetControl(widget=toggle, position=position)
+
+        dropdown_box = widgets.HBox([dropdown, toggle])
+        gui_control = WidgetControl(widget=dropdown_box, position=position)
+
+        def on_toggle(change):
+            if change["new"]:
+                self.remove(btn_control)
+                self.add(gui_control)
+            else:
                 try:
-                    new_tile = name_to_tile[new_name]
-                    self.substitute(current_layer, new_tile)
-                    current_layer = new_tile
-                except Exception as e:
-                    raise ValueError(f"Failed to switch basemap: {e}")
+                    self.remove(gui_control)
+                except ValueError:
+                    pass
+                self.add(btn_control)
 
-            dropdown.observe(on_change, names="value")
-            self.add(WidgetControl(widget=dropdown, position=position))
-        except Exception as e:
-            raise RuntimeError(f"Failed to add basemap GUI control: {e}")
+        toggle.observe(on_toggle, names="value")
+
+        self.add(btn_control)
