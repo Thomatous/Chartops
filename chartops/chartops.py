@@ -9,11 +9,14 @@ from ipyleaflet import (
     GeoJSON,
     ImageOverlay,
     LayersControl,
+    GeomanDrawControl,
+    SearchControl,
     Map as iPyLeafletMap,
     TileLayer,
     VideoOverlay,
     WidgetControl,
     WMSLayer,
+    Marker,
     basemap_to_tiles,
 )
 from chartops import common
@@ -364,3 +367,44 @@ class Map(iPyLeafletMap):
         toggle.observe(on_toggle, names="value")
 
         self.add(btn_control)
+
+    def add_draw_control(self, position: str = "topleft") -> None:
+        """
+        Add a draw control to the map.
+
+        Args:
+            position (str, optional): Position of the draw control. Valid positions are "topright", "topleft", "bottomright", "bottomleft". Default is "topright".
+
+        Returns:
+            None
+
+        Raises:
+            ValueError: If the position is not valid.
+        """
+        self._validate_position(position)
+        self.add(GeomanDrawControl(position=position))
+    
+    def _remove_draw_control(self) -> None:
+        for ctrl in list(self.controls):
+            if isinstance(ctrl, (GeomanDrawControl)):
+                self.remove(ctrl)
+
+    def add_search_control(self, position="topleft") -> None:
+        self._validate_position(position)
+        self._remove_draw_control()
+
+        search = SearchControl(
+            position="topleft",
+            url='https://nominatim.openstreetmap.org/search?format=json&q={s}',
+            zoom=12,
+            marker=Marker()
+        )
+
+        self.add(search)
+
+        def on_found(**kwargs):
+            print(kwargs)
+
+        search.on_location_found(on_found)
+    
+
