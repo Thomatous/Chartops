@@ -2,7 +2,6 @@
 
 """Tests for `chartops` package."""
 
-
 import unittest
 import tempfile
 import numpy as np
